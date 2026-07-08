@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import {
   Alert,
   Box,
@@ -46,7 +46,7 @@ export const AssetsPage = () => {
     void loadAssets();
   }, []);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const cleanedName = form.name.trim();
 
@@ -77,95 +77,65 @@ export const AssetsPage = () => {
   };
 
   return (
-    <Box sx={{ flexGrow: 1, bgcolor: '#0B0F19', minHeight: '100vh', p: 4, color: 'white' }}>
-      <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 1 }}>
-        Assets Module
+    <Box sx={{ maxWidth: 900, mx: 'auto' }}>
+      <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+        Assets
       </Typography>
-      <Typography variant="body1" sx={{ color: '#9CA3AF', mb: 4 }}>
-        Add and review assets from the navigation panel.
+      <Typography variant="body1" sx={{ color: '#6b7280', mb: 3 }}>
+        Add and review assets in a simple list.
       </Typography>
 
-      <Card sx={{ bgcolor: '#111622', border: '1px solid #1F2937', mb: 4 }}>
+      <Card sx={{ border: '1px solid #e5e7eb', boxShadow: 'none', mb: 3 }}>
         <CardContent>
-          <Typography variant="h6" sx={{ mb: 2, color: '#3B82F6' }}>
+          <Typography variant="h6" sx={{ mb: 2 }}>
             Add New Asset
           </Typography>
           <Box component="form" onSubmit={handleSubmit}>
-            <Stack spacing={2} direction={{ xs: 'column', md: 'row' }} sx={{ mb: 2 }}>
+            <Stack spacing={2} sx={{ mb: 2 }}>
               <TextField
                 label="Asset name"
                 value={form.name}
                 onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
                 fullWidth
                 required
-                sx={{
-                  '& .MuiInputLabel-root': { color: '#9CA3AF' },
-                  '& .MuiInputBase-input': { color: 'white' },
-                  '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: '#374151' } },
-                }}
               />
-              <TextField
-  select
-  label="Asset type"
-  value={form.type}
-  onChange={(event) =>
-    setForm((prev) => ({
-      ...prev,
-      type: event.target.value as Asset['type'],
-    }))
-  }
-  fullWidth
-  SelectProps={{
-    MenuProps: {
-      PaperProps: {
-        sx: {
-          bgcolor: '#111622',
-          color: 'white',
-          border: '1px solid #374151',
-          '& .MuiMenuItem-root': {
-            color: 'white',
-          },
-          '& .MuiMenuItem-root:hover': {
-            bgcolor: '#1F2937',
-          },
-          '& .Mui-selected': {
-            bgcolor: '#2563EB !important',
-            color: 'white',
-          },
-        },
-      },
-    },
-  }}
-  sx={{
-    minWidth: 180,
-    '& .MuiInputLabel-root': {
-      color: '#9CA3AF',
-    },
-    '& .MuiOutlinedInput-root': {
-      color: 'white',
-      '& fieldset': {
-        borderColor: '#374151',
-      },
-      '&:hover fieldset': {
-        borderColor: '#3B82F6',
-      },
-      '&.Mui-focused fieldset': {
-        borderColor: '#3B82F6',
-      },
-    },
-    '& .MuiSvgIcon-root': {
-      color: 'white',
-    },
-  }}
->
-  <MenuItem value="SERVER">SERVER</MenuItem>
-  <MenuItem value="CLOUD_AWS">CLOUD AWS</MenuItem>
-  <MenuItem value="CLOUD_AZURE">CLOUD AZURE</MenuItem>
-  <MenuItem value="K8S_POD">K8S POD</MenuItem>
-</TextField>
-              
+              <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
+                <TextField
+                  select
+                  label="Asset type"
+                  value={form.type}
+                  onChange={(event) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      type: event.target.value as Asset['type'],
+                    }))
+                  }
+                  fullWidth
+                >
+                  <MenuItem value="SERVER">SERVER</MenuItem>
+                  <MenuItem value="CLOUD_AWS">CLOUD AWS</MenuItem>
+                  <MenuItem value="CLOUD_AZURE">CLOUD AZURE</MenuItem>
+                  <MenuItem value="K8S_POD">K8S POD</MenuItem>
+                </TextField>
+                {/* <TextField
+                  select
+                  label="Status"
+                  value={form.status}
+                  onChange={(event) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      status: event.target.value as Asset['status'],
+                    }))
+                  }
+                  fullWidth
+                >
+                  <MenuItem value="HEALTHY">HEALTHY</MenuItem>
+                  <MenuItem value="WARNING">WARNING</MenuItem>
+                  <MenuItem value="CRITICAL">CRITICAL</MenuItem>
+                </TextField> */}
+              </Stack>
             </Stack>
-            <Button type="submit" variant="contained" disabled={loading} sx={{ bgcolor: '#EF4444', '&:hover': { bgcolor: '#DC2626' } }}>
+            <Button type="submit" variant="contained" disabled={loading} sx={{ bgcolor: '#2563eb', '&:hover': { bgcolor: '#1d4ed8' } }}>
               {loading ? 'Adding...' : 'Add Asset'}
             </Button>
           </Box>
@@ -178,37 +148,26 @@ export const AssetsPage = () => {
       </Card>
 
       <Typography variant="h6" sx={{ mb: 2 }}>
-        Current Inventory
+        Inventory
       </Typography>
       <Stack spacing={2}>
         {assets.map((asset) => (
-          <Card key={asset.assetId || asset.name} sx={{ bgcolor: '#111622', border: '1px solid #1F2937' }}>
+          <Card key={asset.assetId || asset.name} sx={{ border: '1px solid #e5e7eb', boxShadow: 'none' }}>
             <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Box>
-                <Typography
-  variant="subtitle1"
-  sx={{
-    fontWeight: 600,
-    color: "white",
-  }}
->
-  {asset.name}
-</Typography>
-                <Typography
-  variant="body2"
-  sx={{
-    color: "#D1D5DB",
-  }}
->
-  Type: {asset.type}
-</Typography>
+                <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                  {asset.name}
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#6b7280' }}>
+                  {asset.type}
+                </Typography>
               </Box>
               <Chip
                 label={asset.status}
                 sx={{
-                  bgcolor: asset.status === 'CRITICAL' ? '#7F1D1D' : asset.status === 'WARNING' ? '#78350F' : '#064E3B',
-                  color: 'white',
-                  fontWeight: 'bold',
+                  bgcolor: asset.status === 'CRITICAL' ? '#fee2e2' : asset.status === 'WARNING' ? '#fef3c7' : '#dcfce7',
+                  color: asset.status === 'CRITICAL' ? '#b91c1c' : asset.status === 'WARNING' ? '#92400e' : '#166534',
+                  fontWeight: 700,
                 }}
               />
             </CardContent>

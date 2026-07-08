@@ -16,9 +16,9 @@ function App() {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#f5f7fb', color: '#111827' }}>
       <Sidebar activeView={activeView} onNavigate={setActiveView} />
-      {renderView()}
+      <Box sx={{ flexGrow: 1, p: { xs: 2, md: 3 } }}>{renderView()}</Box>
     </Box>
   );
 }

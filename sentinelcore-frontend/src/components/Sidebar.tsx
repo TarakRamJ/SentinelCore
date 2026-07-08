@@ -1,6 +1,6 @@
 import { Box, List, ListItemButton, ListItemText, Typography } from '@mui/material';
 
-const menuItems = ['Dashboard', 'Assets', 'Incidents', 'Vulnerabilities', 'Audit', 'Compliance', 'DevSecOps'];
+const menuItems = ['Dashboard', 'Assets'];
 
 type SidebarProps = {
   activeView: string;
@@ -9,19 +9,27 @@ type SidebarProps = {
 
 export const Sidebar = ({ activeView, onNavigate }: SidebarProps) => {
   return (
-    <Box sx={{ width: 240, bgcolor: '#111827', color: 'white', height: '100vh', p: 2 }}>
-      <Typography variant="h6" sx={{ color: '#EF4444', fontWeight: 'bold', mb: 4 }}>
-        SentinelCore SecureOps
+    <Box sx={{ width: 220, bgcolor: '#ffffff', borderRight: '1px solid #e5e7eb', height: '100vh', p: 3, boxSizing: 'border-box' }}>
+      <Typography variant="h6" sx={{ fontWeight: 700, mb: 3, color: '#111827' }}>
+        SentinelCore
       </Typography>
-      <List>
+      <List disablePadding>
         {menuItems.map((item) => (
           <ListItemButton
             key={item}
             selected={activeView === item}
-            sx={{ borderRadius: 1, mb: 0.5 }}
             onClick={() => onNavigate(item)}
+            sx={{
+              borderRadius: 2,
+              mb: 1,
+              color: activeView === item ? '#2563eb' : '#4b5563',
+              '&.Mui-selected': {
+                bgcolor: '#eff6ff',
+                color: '#2563eb',
+              },
+            }}
           >
-            <ListItemText primary={item} sx={{ color: activeView === item ? '#3B82F6' : '#9CA3AF' }} />
+            <ListItemText primary={item} />
           </ListItemButton>
         ))}
       </List>
