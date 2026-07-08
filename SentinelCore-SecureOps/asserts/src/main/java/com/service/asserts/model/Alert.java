@@ -68,7 +68,6 @@ public class Alert {
         this.createdAt = OffsetDateTime.now();
     }
 
-    // Getters and Setters
     public UUID getAlertId() { return alertId; }
     public UUID getAssetId() { return assetId; }
     public String getMetricName() { return metricName; }

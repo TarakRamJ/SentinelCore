@@ -5,14 +5,14 @@ import java.util.UUID;
 public class AlertResponseDTO {
     private UUID alertId;
     private UUID assetId;
-    private String assetName;           // e.g., "DB-SRV-12"
-    private String serverType;          // e.g., "DB-SRV"
-    private String serverName;          // e.g., "12"
-    private String metricName;          // e.g., "CPU"
-    private float metricValue;          // e.g., 94
-    private String severity;            // e.g., "CRITICAL"
-    private String status;              // e.g., "OPEN", "RESOLVED"
-    private String solution;            // e.g., "Auto-scaled", "Cleanup scheduled"
+    private String assetName;
+    private String serverType;
+    private String serverName;
+    private String metricName;
+    private float metricValue;
+    private String severity;
+    private String status;
+    private String solution;
 
     public AlertResponseDTO() {}
 
@@ -26,9 +26,7 @@ public class AlertResponseDTO {
         this.severity = severity;
         this.status = status;
         this.solution = solution;
-        
-        // Parse asset name to extract serverType and serverName
-        // e.g., "DB-SRV-12" -> serverType="DB-SRV", serverName="12"
+
         if (assetName != null && assetName.contains("-")) {
             String[] parts = assetName.split("-(?=[^-]*$)"); // Split on last dash
             if (parts.length == 2) {
@@ -40,8 +38,6 @@ public class AlertResponseDTO {
             }
         }
     }
-
-    // Getters and Setters
     public UUID getAlertId() { return alertId; }
     public void setAlertId(UUID alertId) { this.alertId = alertId; }
 

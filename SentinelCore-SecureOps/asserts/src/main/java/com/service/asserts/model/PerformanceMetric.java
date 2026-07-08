@@ -39,7 +39,6 @@ public class PerformanceMetric {
         this.timestamp = OffsetDateTime.now();
     }
 
-    // Getters
     public UUID getMetricId() { return metricId; }
     public UUID getAssetId() { return assetId; }
     public float getCpuUsage() { return cpuUsage; }

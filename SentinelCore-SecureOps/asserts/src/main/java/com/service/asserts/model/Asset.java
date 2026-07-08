@@ -36,7 +36,6 @@ public class Asset {
     public enum AssetType { SERVER, CLOUD_AWS, CLOUD_AZURE, K8S_POD }
     public enum HealthStatus { HEALTHY, WARNING, CRITICAL }
 
-    // Getters, Setters, Constructors
     public Asset() {}
 
     public Asset(UUID assetId, String name, AssetType type, HealthStatus status) {

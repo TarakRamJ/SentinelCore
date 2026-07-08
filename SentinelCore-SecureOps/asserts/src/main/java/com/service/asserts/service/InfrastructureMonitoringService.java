@@ -31,7 +31,6 @@ public class InfrastructureMonitoringService {
         this.alertRepository = alertRepository;
     }
 
-    // Core CRUD Management
     @Transactional
     public Asset createAsset(Asset asset) {
         if (asset.getAssetId() == null) {
@@ -45,20 +44,12 @@ public class InfrastructureMonitoringService {
         return assetRepository.findAll();
     }
 
-    // Background Engine: Simulated Metric Scraping every 10 seconds
     @Scheduled(fixedRate = 2000)
     @Transactional
     public void scrapeInfrastructureTelemetry() {
         List<Asset> assets = assetRepository.findAll();
 
-        // Seed initial mock assets if DB is empty to meet the scale criteria
-        if (assets.isEmpty()) {
-            seedMockAssets();
-            return;
-        }
-
         for (Asset asset : assets) {
-            // Generate telemetry payload
             float cpu = random.nextFloat() * 100;
             float memory = random.nextFloat() * 100;
             float disk = random.nextFloat() * 100;
@@ -90,45 +81,38 @@ public class InfrastructureMonitoringService {
             }
 
             metricRepository.save(metric);
-            // Process rules engine evaluation
             evaluateRulesAndHealth(asset, metric);
         }
     }
-
     private void evaluateRulesAndHealth(Asset asset, PerformanceMetric metric) {
         Asset.HealthStatus targetStatus = Asset.HealthStatus.HEALTHY;
 
-        // Check Threshold Boundaries
         targetStatus = checkMetricThreshold(asset, "CPU", metric.getCpuUsage(), targetStatus);
         targetStatus = checkMetricThreshold(asset, "Memory", metric.getMemoryUsage(), targetStatus);
         targetStatus = checkMetricThreshold(asset, "Disk", metric.getDiskUsage(), targetStatus);
 
-        // If rules state changed, update the Asset asset tracking layer
         if (asset.getStatus() != targetStatus) {
             asset.setStatus(targetStatus);
             asset.setUpdatedAt(OffsetDateTime.now());
             assetRepository.save(asset);
         }
     }
-
     private Asset.HealthStatus checkMetricThreshold(Asset asset, String metricName, float value, Asset.HealthStatus currentEvaluatedStatus) {
         Asset.HealthStatus nextStatus = currentEvaluatedStatus;
 
-        if (value >= 90.0f) { // Critical Breach Threshold
+        if (value >= 90.0f) {
             nextStatus = Asset.HealthStatus.CRITICAL;
             triggerAlertIfNew(asset.getAssetId(), metricName, value, Alert.AlertSeverity.CRITICAL);
-        } else if (value >= 75.0f) { // Warning Breach Threshold
+        } else if (value >= 75.0f) {
             if (nextStatus != Asset.HealthStatus.CRITICAL) {
                 nextStatus = Asset.HealthStatus.WARNING;
             }
             triggerAlertIfNew(asset.getAssetId(), metricName, value, Alert.AlertSeverity.HIGH);
         } else {
-            // Auto-resolve mechanism if metric drops back down
             resolveAlertsIfAny(asset.getAssetId(), metricName);
         }
         return nextStatus;
     }
-
     private void triggerAlertIfNew(UUID assetId, String metricName, float value, Alert.AlertSeverity severity) {
         List<Alert> activeAlerts = alertRepository.findByAssetIdAndResolvedFalse(assetId);
         boolean alreadyFired = activeAlerts.stream().anyMatch(a -> a.getMetricName().equalsIgnoreCase(metricName));
@@ -137,10 +121,8 @@ public class InfrastructureMonitoringService {
             maintainAlertLimit();
             Alert alert = new Alert(assetId, metricName, value, severity);
             alertRepository.save(alert);
-            // System design extension: Publish event to Apache Kafka here
         }
     }
-
     private void resolveAlertsIfAny(UUID assetId, String metricName) {
         List<Alert> activeAlerts = alertRepository.findByAssetIdAndResolvedFalse(assetId);
         activeAlerts.stream()
@@ -150,22 +132,11 @@ public class InfrastructureMonitoringService {
                     alertRepository.save(a);
                 });
     }
-
-    private void seedMockAssets() {
-        // Generates sample operational assets matching standard deployment models
-        assetRepository.save(new Asset(UUID.randomUUID(), "DB-SRV-12", Asset.AssetType.SERVER, Asset.HealthStatus.HEALTHY));
-        assetRepository.save(new Asset(UUID.randomUUID(), "APP-SRV-47", Asset.AssetType.SERVER, Asset.HealthStatus.HEALTHY));
-        assetRepository.save(new Asset(UUID.randomUUID(), "AWS-EC2-K8S-NODE", Asset.AssetType.CLOUD_AWS, Asset.HealthStatus.HEALTHY));
-    }
     private void maintainAlertLimit() {
-
         long totalAlerts = alertRepository.count();
-
         if (totalAlerts >= 70) {
-
             List<Alert> alerts = alertRepository.findAllByOrderByCreatedAtAsc();
-
-            alertRepository.delete(alerts.get(0));   // Delete oldest alert
+            alertRepository.delete(alerts.get(0));
         }
     }
 }
