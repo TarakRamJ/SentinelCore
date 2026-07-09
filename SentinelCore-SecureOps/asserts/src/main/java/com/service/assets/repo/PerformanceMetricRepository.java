@@ -1,6 +1,6 @@
-package com.service.asserts.repo;
+package com.service.assets.repo;
 
-import com.service.asserts.model.*;
+import com.service.assets.model.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 import java.util.UUID;

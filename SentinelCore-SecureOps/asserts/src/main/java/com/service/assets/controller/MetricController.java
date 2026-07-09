@@ -1,7 +1,7 @@
-package com.service.asserts.controller;
+package com.service.assets.controller;
 
-import com.service.asserts.model.PerformanceMetric;
-import com.service.asserts.repo.PerformanceMetricRepository;
+import com.service.assets.model.PerformanceMetric;
+import com.service.assets.repo.PerformanceMetricRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,4 +1,4 @@
-package com.service.asserts.model;
+package com.service.assets.model;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;

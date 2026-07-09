@@ -1,4 +1,4 @@
-package com.service.asserts.controller;
+package com.service.assets.controller;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.service.asserts.dto.AlertResponseDTO;
-import com.service.asserts.model.Alert;
-import com.service.asserts.model.Asset;
-import com.service.asserts.repo.AlertRepository;
-import com.service.asserts.repo.AssetRepository;
+import com.service.assets.dto.AlertResponseDTO;
+import com.service.assets.model.Alert;
+import com.service.assets.model.Asset;
+import com.service.assets.repo.AlertRepository;
+import com.service.assets.repo.AssetRepository;
 
 @RestController
 @RequestMapping("/api/alerts")

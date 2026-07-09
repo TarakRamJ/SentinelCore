@@ -1,6 +1,6 @@
-package com.service.asserts.repo;
+package com.service.assets.repo;
 
-import com.service.asserts.model.Alert;
+import com.service.assets.model.Alert;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.UUID;

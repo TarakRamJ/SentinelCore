@@ -1,3 +1,29 @@
+/* Layout Accents */
+:root {
+  --accent: #2563eb;
+  --accent-bg: #eff6ff;
+  --accent-border: #bfdbfe;
+  --border: #e2e8f0;
+  --text-h: #0f172a;
+  --social-bg: #f1f5f9;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+/* Sidebar Specific Polish Overrides */
+.MuiListItemButton-root {
+  transition: all 0.15s ease !important;
+}
+
+.MuiListItemButton-root.Mui-selected {
+  background-color: #f0f7ff !important;
+  font-weight: 600 !important;
+}
+
+.MuiListItemButton-root:not(.Mui-selected):hover {
+  background-color: #f8fafc !important;
+}
+
+/* Legacy Utility Classes preserved from original configuration */
 .counter {
   font-size: 16px;
   padding: 5px 10px;

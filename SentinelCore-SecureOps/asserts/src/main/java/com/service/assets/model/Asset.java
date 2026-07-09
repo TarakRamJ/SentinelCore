@@ -1,4 +1,4 @@
-package com.service.asserts.model;
+package com.service.assets.model;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -13,6 +13,9 @@ public class Asset {
     @Id
     @Column(name = "asset_id")
     private UUID assetId;
+
+    @Column(name="ip", nullable = false)
+    private String ip;
 
     @Column(nullable = false)
     private String name;
@@ -38,8 +41,9 @@ public class Asset {
 
     public Asset() {}
 
-    public Asset(UUID assetId, String name, AssetType type, HealthStatus status) {
+    public Asset(UUID assetId, String ip, String name, AssetType type, HealthStatus status) {
         this.assetId = assetId;
+        this.ip=ip;
         this.name = name;
         this.type = type;
         this.status = status;
@@ -49,6 +53,8 @@ public class Asset {
 
     public UUID getAssetId() { return assetId; }
     public void setAssetId(UUID assetId) { this.assetId = assetId; }
+    public String getip(){ return ip; }
+    public void setip(String ip){ this.ip=ip; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public AssetType getType() { return type; }

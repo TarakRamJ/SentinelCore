@@ -1,179 +1,207 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import {
-  Alert,
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Chip,
-  MenuItem,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material';
-import { createAsset, getAssets } from '../services/api';
+import { Alert, Box, Typography } from '@mui/material';
+
 import type { Asset } from '../types';
+
+import {
+  createAsset,
+  getAssets,
+  getAssetsByIpPrefix,
+  getStoredUserRole,
+} from '../services/api';
+
+import AddAsset from '../components/assets/AddAsset';
+import AssetStats from '../components/assets/AssetStats';
+import SearchAsset from '../components/assets/SearchAsset';
+import AssetList from '../components/assets/AssetList';
 
 type AssetFormState = {
   name: string;
+  ip: string;
   type: Asset['type'];
   status: Asset['status'];
 };
 
 const initialFormState: AssetFormState = {
   name: '',
+  ip: '',
   type: 'SERVER',
   status: 'HEALTHY',
 };
 
-export const AssetsPage = () => {
+export default function AssetsPage() {
   const [assets, setAssets] = useState<Asset[]>([]);
-  const [form, setForm] = useState<AssetFormState>(initialFormState);
+  const [form, setForm] = useState(initialFormState);
+
+  const [searchPrefix, setSearchPrefix] = useState('');
+
   const [loading, setLoading] = useState(false);
+  const [searching, setSearching] = useState(false);
+
   const [feedback, setFeedback] = useState<string | null>(null);
+
+  const [isAdmin, setIsAdmin] = useState(
+    getStoredUserRole() === 'ADMIN'
+  );
 
   const loadAssets = async () => {
     try {
       const data = await getAssets();
       setAssets(data);
     } catch (error) {
-      console.error('Failed to load assets', error);
-      setFeedback('Unable to load assets right now.');
+      console.error(error);
+      setFeedback('Unable to load assets.');
     }
   };
 
   useEffect(() => {
+    setIsAdmin(getStoredUserRole() === 'ADMIN');
     void loadAssets();
   }, []);
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const cleanedName = form.name.trim();
+  const handleSearch = async () => {
+    if (!searchPrefix.trim()) {
+      void loadAssets();
+      return;
+    }
 
-    if (!cleanedName) {
-      setFeedback('Please enter an asset name.');
+    setSearching(true);
+
+    try {
+      const data = await getAssetsByIpPrefix(searchPrefix.trim());
+      setAssets(data);
+
+      if (!data.length) {
+        setFeedback('No assets found.');
+      } else {
+        setFeedback(null);
+      }
+    } catch (error) {
+      console.error(error);
+      setFeedback('Search failed.');
+    } finally {
+      setSearching(false);
+    }
+  };
+
+  const handleSubmit = async (
+    event: FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+
+    const cleanedName = form.name.trim();
+    const cleanedIp = form.ip.trim();
+
+    if (!cleanedName || !cleanedIp) {
+      setFeedback('Please complete all fields.');
+      return;
+    }
+
+    if (!isAdmin) {
+      setFeedback('Only administrators can add assets.');
       return;
     }
 
     setLoading(true);
-    setFeedback(null);
 
     try {
       const createdAsset = await createAsset({
         name: cleanedName,
+        ip: cleanedIp,
         type: form.type,
         status: form.status,
       } as Asset);
 
       setAssets((prev) => [createdAsset, ...prev]);
+
       setForm(initialFormState);
-      setFeedback(`Asset ${createdAsset.name} added successfully.`);
+
+      setFeedback(
+        `Asset "${createdAsset.name}" added successfully.`
+      );
     } catch (error) {
-      console.error('Failed to add asset', error);
-      setFeedback('Unable to add asset. Please try again.');
+      console.error(error);
+      setFeedback('Unable to add asset.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Box sx={{ maxWidth: 900, mx: 'auto' }}>
-      <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
-        Assets
-      </Typography>
-      <Typography variant="body1" sx={{ color: '#6b7280', mb: 3 }}>
-        Add and review assets in a simple list.
+    <Box
+      sx={{
+        maxWidth: 1300,
+        mx: 'auto',
+        p: 4,
+      }}
+    >
+      <Box
+        sx={{
+          mb: 4,
+          p: 4,
+          borderRadius: 4,
+          color: '#fff',
+          background:
+            'linear-gradient(135deg,#2563eb 0%,#4f46e5 100%)',
+          boxShadow:
+            '0 20px 45px rgba(37,99,235,.25)',
+        }}
+      >
+        <Typography
+          variant="h3"
+          fontWeight={700}
+        >
+          Asset Management
+        </Typography>
+
+        <Typography sx={{ mt: 1, opacity: .9 }}>
+          Manage and monitor enterprise assets.
+        </Typography>
+      </Box>
+
+      <AssetStats assets={assets} />
+
+      <AddAsset
+        form={form}
+        setForm={setForm}
+        loading={loading}
+        isAdmin={isAdmin}
+        feedback={feedback}
+        onSubmit={handleSubmit}
+      />
+
+      <Typography
+        variant="h5"
+        fontWeight={700}
+        sx={{ mb: 2 }}
+      >
+        Asset Inventory
       </Typography>
 
-      <Card sx={{ border: '1px solid #e5e7eb', boxShadow: 'none', mb: 3 }}>
-        <CardContent>
-          <Typography variant="h6" sx={{ mb: 2 }}>
-            Add New Asset
-          </Typography>
-          <Box component="form" onSubmit={handleSubmit}>
-            <Stack spacing={2} sx={{ mb: 2 }}>
-              <TextField
-                label="Asset name"
-                value={form.name}
-                onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
-                fullWidth
-                required
-              />
-              <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
-                <TextField
-                  select
-                  label="Asset type"
-                  value={form.type}
-                  onChange={(event) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      type: event.target.value as Asset['type'],
-                    }))
-                  }
-                  fullWidth
-                >
-                  <MenuItem value="SERVER">SERVER</MenuItem>
-                  <MenuItem value="CLOUD_AWS">CLOUD AWS</MenuItem>
-                  <MenuItem value="CLOUD_AZURE">CLOUD AZURE</MenuItem>
-                  <MenuItem value="K8S_POD">K8S POD</MenuItem>
-                </TextField>
-                {/* <TextField
-                  select
-                  label="Status"
-                  value={form.status}
-                  onChange={(event) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      status: event.target.value as Asset['status'],
-                    }))
-                  }
-                  fullWidth
-                >
-                  <MenuItem value="HEALTHY">HEALTHY</MenuItem>
-                  <MenuItem value="WARNING">WARNING</MenuItem>
-                  <MenuItem value="CRITICAL">CRITICAL</MenuItem>
-                </TextField> */}
-              </Stack>
-            </Stack>
-            <Button type="submit" variant="contained" disabled={loading} sx={{ bgcolor: '#2563eb', '&:hover': { bgcolor: '#1d4ed8' } }}>
-              {loading ? 'Adding...' : 'Add Asset'}
-            </Button>
-          </Box>
-          {feedback ? (
-            <Alert severity={feedback.includes('success') ? 'success' : 'info'} sx={{ mt: 2 }}>
-              {feedback}
-            </Alert>
-          ) : null}
-        </CardContent>
-      </Card>
+      <SearchAsset
+        searchPrefix={searchPrefix}
+        setSearchPrefix={setSearchPrefix}
+        searching={searching}
+        loading={loading}
+        onSearch={handleSearch}
+        onClear={() => {
+          setSearchPrefix('');
+          setFeedback(null);
+          void loadAssets();
+        }}
+      />
 
-      <Typography variant="h6" sx={{ mb: 2 }}>
-        Inventory
-      </Typography>
-      <Stack spacing={2}>
-        {assets.map((asset) => (
-          <Card key={asset.assetId || asset.name} sx={{ border: '1px solid #e5e7eb', boxShadow: 'none' }}>
-            <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                  {asset.name}
-                </Typography>
-                <Typography variant="body2" sx={{ color: '#6b7280' }}>
-                  {asset.type}
-                </Typography>
-              </Box>
-              <Chip
-                label={asset.status}
-                sx={{
-                  bgcolor: asset.status === 'CRITICAL' ? '#fee2e2' : asset.status === 'WARNING' ? '#fef3c7' : '#dcfce7',
-                  color: asset.status === 'CRITICAL' ? '#b91c1c' : asset.status === 'WARNING' ? '#92400e' : '#166534',
-                  fontWeight: 700,
-                }}
-              />
-            </CardContent>
-          </Card>
-        ))}
-      </Stack>
+      {!feedback?.includes('success') &&
+        feedback && (
+          <Alert
+            severity="info"
+            sx={{ mb: 3 }}
+          >
+            {feedback}
+          </Alert>
+        )}
+
+      <AssetList assets={assets} />
     </Box>
   );
-};
+}

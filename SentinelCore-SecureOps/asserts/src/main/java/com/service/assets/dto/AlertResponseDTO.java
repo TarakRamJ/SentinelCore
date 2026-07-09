@@ -1,4 +1,4 @@
-package com.service.asserts.dto;
+package com.service.assets.dto;
 
 import java.util.UUID;
 
@@ -28,7 +28,7 @@ public class AlertResponseDTO {
         this.solution = solution;
 
         if (assetName != null && assetName.contains("-")) {
-            String[] parts = assetName.split("-(?=[^-]*$)"); // Split on last dash
+            String[] parts = assetName.split("-(?=[^-]*$)");
             if (parts.length == 2) {
                 this.serverType = parts[0];
                 this.serverName = parts[1];

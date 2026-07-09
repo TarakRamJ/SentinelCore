@@ -3,6 +3,7 @@ export interface Asset {
   type: 'SERVER' | 'CLOUD' | 'NETWORK'; // Maps to AssetType enum
   status: 'HEALTHY' | 'WARNING' | 'CRITICAL'; // Maps to HealthStatus enum
   name: string;
+  ip: string;
 }
 
 export interface PerformanceMetric {

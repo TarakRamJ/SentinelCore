@@ -1,11 +1,11 @@
-package com.service.asserts.service;
+package com.service.assets.service;
 
-import com.service.asserts.model.Alert;
-import com.service.asserts.model.Asset;
-import com.service.asserts.model.PerformanceMetric;
-import com.service.asserts.repo.AlertRepository;
-import com.service.asserts.repo.AssetRepository;
-import com.service.asserts.repo.PerformanceMetricRepository;
+import com.service.assets.model.Alert;
+import com.service.assets.model.Asset;
+import com.service.assets.model.PerformanceMetric;
+import com.service.assets.repo.AlertRepository;
+import com.service.assets.repo.AssetRepository;
+import com.service.assets.repo.PerformanceMetricRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,20 +31,7 @@ public class InfrastructureMonitoringService {
         this.alertRepository = alertRepository;
     }
 
-    @Transactional
-    public Asset createAsset(Asset asset) {
-        if (asset.getAssetId() == null) {
-            asset.setAssetId(UUID.randomUUID());
-        }
-        asset.setStatus(Asset.HealthStatus.HEALTHY);
-        return assetRepository.save(asset);
-    }
-
-    public List<Asset> getAllAssets() {
-        return assetRepository.findAll();
-    }
-
-    @Scheduled(fixedRate = 2000)
+    @Scheduled(fixedRate = 200000)
     @Transactional
     public void scrapeInfrastructureTelemetry() {
         List<Asset> assets = assetRepository.findAll();
