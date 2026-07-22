@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface AlertRepository extends JpaRepository<Alert, UUID> {
-    List<Alert> findByAssetIdAndResolvedFalse(UUID assetId);
+    List<Alert> findByAssetId(UUID assetId);
     List<Alert> findAllByOrderByCreatedAtAsc();
     long count();
 }

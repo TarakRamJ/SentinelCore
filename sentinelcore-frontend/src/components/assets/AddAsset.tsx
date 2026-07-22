@@ -1,4 +1,3 @@
-import { FormEvent } from 'react';
 import {
   Alert,
   Box,
@@ -26,7 +25,32 @@ type AddAssetProps = {
   loading: boolean;
   isAdmin: boolean;
   feedback: string | null;
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  onSubmit: (event: React.SyntheticEvent<HTMLFormElement, SubmitEvent>) => void; // FIXED: Replaced FormEvent with modern event type
+};
+
+// Shared glass tokens so every field/button on this card reads as one material
+const glassField = {
+  "& .MuiOutlinedInput-root": {
+    borderRadius: 3,
+    background: "rgba(255, 255, 255, 0.35)",
+    backdropFilter: "blur(10px)",
+    WebkitBackdropFilter: "blur(10px)",
+    transition: "background .2s ease, box-shadow .2s ease",
+
+    "& fieldset": {
+      borderColor: "rgba(148, 163, 184, 0.35)",
+    },
+    "&:hover fieldset": {
+      borderColor: "rgba(99, 102, 241, 0.45)",
+    },
+    "&.Mui-focused": {
+      background: "rgba(255, 255, 255, 0.55)",
+      boxShadow: "0 0 0 4px rgba(99, 102, 241, 0.12)",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "rgba(99, 102, 241, 0.6)",
+    },
+  },
 };
 
 export default function AddAsset({
@@ -41,16 +65,37 @@ export default function AddAsset({
     <Card
       sx={{
         borderRadius: 4,
-        boxShadow: '0 10px 30px rgba(15,23,42,.08)',
         mb: 4,
+        position: 'relative',
+        overflow: 'hidden',
+        background: 'rgba(255, 255, 255, 0.55)',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+        border: '1px solid rgba(255, 255, 255, 0.6)',
+        boxShadow: '0 8px 32px rgba(31, 38, 135, 0.14)',
+
+        // subtle top sheen to sell the "glass panel" read
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          inset: 0,
+          background:
+            'linear-gradient(135deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 40%)',
+          pointerEvents: 'none',
+        },
       }}
     >
-      <CardContent>
+      <CardContent sx={{ position: 'relative' }}>
 
         <Typography
           variant="h5"
-          fontWeight={700}
-          mb={3}
+          sx={{
+            fontWeight: 700,
+            mb: 3,
+            background: 'linear-gradient(90deg,#1e293b,#4f46e5)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
         >
           Add New Asset
         </Typography>
@@ -72,11 +117,7 @@ export default function AddAsset({
                     name: e.target.value,
                   }))
                 }
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: 3,
-                  },
-                }}
+                sx={glassField}
               />
 
               <TextField
@@ -89,11 +130,7 @@ export default function AddAsset({
                     ip: e.target.value,
                   }))
                 }
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: 3,
-                  },
-                }}
+                sx={glassField}
               />
 
               <TextField
@@ -106,9 +143,24 @@ export default function AddAsset({
                     type: e.target.value as Asset['type'],
                   }))
                 }
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: 3,
+                sx={glassField}
+                slotProps={{
+                  select: {
+                    MenuProps: {
+  slotProps: {
+    paper: {
+      sx: {
+        borderRadius: 2,
+        mt: 0.5,
+        background: 'rgba(255, 255, 255, 0.75)',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+        border: '1px solid rgba(255, 255, 255, 0.6)',
+        boxShadow: '0 8px 32px rgba(31, 38, 135, 0.18)',
+      },
+    },
+  },
+},
                   },
                 }}
               >
@@ -138,12 +190,26 @@ export default function AddAsset({
                   height: 52,
                   borderRadius: 3,
                   fontWeight: 700,
+                  textTransform: 'none',
+                  fontSize: '1rem',
                   background:
                     "linear-gradient(90deg,#2563eb,#4f46e5)",
+                  boxShadow: '0 8px 24px rgba(79, 70, 229, 0.35)',
+                  border: '1px solid rgba(255, 255, 255, 0.25)',
+                  transition: 'transform .2s ease, box-shadow .2s ease',
 
                   "&:hover": {
                     background:
                       "linear-gradient(90deg,#1d4ed8,#4338ca)",
+                    boxShadow: '0 12px 28px rgba(79, 70, 229, 0.45)',
+                    transform: 'translateY(-2px)',
+                  },
+                  "&:active": {
+                    transform: 'translateY(0)',
+                  },
+                  "&.Mui-disabled": {
+                    background: 'rgba(99, 102, 241, 0.35)',
+                    color: 'rgba(255,255,255,0.7)',
                   },
                 }}
               >
@@ -153,14 +219,32 @@ export default function AddAsset({
             </Stack>
           </Box>
         ) : (
-          <Alert severity="info">
-            Only administrators can add assets.
+          <Alert
+            severity="info"
+            sx={{
+              borderRadius: 3,
+              background: 'rgba(224, 242, 254, 0.5)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.5)',
+            }}
+          >
+            Only administrators can add assets. Contact Admin.
           </Alert>
         )}
 
         {feedback && (
           <Alert
-            sx={{ mt: 3 }}
+            sx={{
+              mt: 3,
+              borderRadius: 3,
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.5)',
+              background: feedback.toLowerCase().includes('success')
+                ? 'rgba(220, 252, 231, 0.55)'
+                : 'rgba(224, 242, 254, 0.5)',
+            }}
             severity={
               feedback.toLowerCase().includes("success")
                 ? "success"

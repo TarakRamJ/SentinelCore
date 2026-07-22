@@ -66,27 +66,18 @@ export const Dashboard = () => {
   const activeAlerts = alerts.filter(
     (alert) => String(alert.status).toUpperCase() === 'OPEN'
   ).length;
-
-  const cpuMetrics = metrics.filter(
-    (metric) => metric.name?.toUpperCase() === 'CPU'
-  );
-
-  const avgCpu = cpuMetrics.length
+ const avgCpu =
+  metrics.length > 0
     ? Math.round(
-        cpuMetrics.reduce((sum, metric) => sum + metric.value, 0) /
-          cpuMetrics.length
+        metrics.reduce(
+          (sum, metric) => sum + Number(metric.cpuUsage),
+          0
+        ) / metrics.length
       )
     : 0;
 
   return (
-    <Box
-      sx={{
-        width: '100%', // <-- ADDED: Forces the wrapper to expand fully
-        maxWidth: 1350,
-        mx: 'auto',
-        p: 4,
-      }}
-    >
+    <Box sx={{ width: '100%', maxWidth: 1350, mx: 'auto', p: 4 }}>
       <Box
         sx={{
           mb: 4,
@@ -97,117 +88,65 @@ export const Dashboard = () => {
           boxShadow: '0 20px 45px rgba(37,99,235,.25)',
         }}
       >
-        <Typography variant="h3" fontWeight={700}>
+        <Typography variant="h3" sx={{ fontWeight: 700 }}>
           Security Dashboard
         </Typography>
 
-        <Typography
-          sx={{
-            mt: 1,
-            opacity: 0.9,
-          }}
-        >
+        <Typography sx={{ mt: 1, opacity: 0.9 }}>
           Real-time monitoring of infrastructure, alerts and system performance.
         </Typography>
       </Box>
 
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        {/* ADDED sx={{ display: 'flex' }} to all Grid items to allow vertical stretching */}
-        <Grid item xs={12} md={4} sx={{ display: 'flex' }}>
-          <Card
-            sx={{
-              width: '100%', // <-- CHANGED from flex: 1 to enforce full horizontal width
-              borderRadius: 4,
-              boxShadow: '0 10px 30px rgba(15,23,42,.08)',
-            }}
-          >
-            <CardContent>
-              <Inventory2RoundedIcon
-                color="primary"
-                sx={{
-                  fontSize: 38,
-                  mb: 1,
-                }}
-              />
-              <Typography color="text.secondary">Assets</Typography>
-              <Typography variant="h3" fontWeight={700}>
-                {totalAssets}
-              </Typography>
-              <Chip label="Tracked" color="primary" sx={{ mt: 2 }} />
-            </CardContent>
-          </Card>
-        </Grid>
+      <Box sx={{ width: '100%', mb: 4 }}>
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, md: 4 }}>
+            <Card sx={{ height: '100%', borderRadius: 4, boxShadow: '0 10px 30px rgba(15,23,42,.08)' }}>
+              <CardContent>
+                <Inventory2RoundedIcon color="primary" sx={{ fontSize: 38, mb: 1 }} />
+                <Typography color="text.secondary">Assets</Typography>
+                <Typography variant="h3" sx={{ fontWeight: 700 }}>
+                  {totalAssets}
+                </Typography>
+                <Chip label="Tracked" color="primary" sx={{ mt: 2 }} />
+              </CardContent>
+            </Card>
+          </Grid>
 
-        <Grid item xs={12} md={4} sx={{ display: 'flex' }}>
-          <Card
-            sx={{
-              width: '100%',
-              borderRadius: 4,
-              boxShadow: '0 10px 30px rgba(15,23,42,.08)',
-            }}
-          >
-            <CardContent>
-              <WarningAmberRoundedIcon
-                color="error"
-                sx={{
-                  fontSize: 38,
-                  mb: 1,
-                }}
-              />
-              <Typography color="text.secondary">Open Alerts</Typography>
-              <Typography variant="h3" fontWeight={700} color="error.main">
-                {activeAlerts}
-              </Typography>
-              <Chip label="Needs Attention" color="error" sx={{ mt: 2 }} />
-            </CardContent>
-          </Card>
-        </Grid>
+          <Grid size={{ xs: 12, md: 4 }}>
+            <Card sx={{ height: '100%', borderRadius: 4, boxShadow: '0 10px 30px rgba(15,23,42,.08)' }}>
+              <CardContent>
+                <WarningAmberRoundedIcon color="error" sx={{ fontSize: 38, mb: 1 }} />
+                <Typography color="text.secondary">Open Alerts</Typography>
+                <Typography variant="h3" color="error.main" sx={{ fontWeight: 700 }}>
+                  {activeAlerts}
+                </Typography>
+                <Chip label="Needs Attention" color="error" sx={{ mt: 2 }} />
+              </CardContent>
+            </Card>
+          </Grid>
 
-        <Grid item xs={12} md={4} sx={{ display: 'flex' }}>
-          <Card
-            sx={{
-              width: '100%',
-              borderRadius: 4,
-              boxShadow: '0 10px 30px rgba(15,23,42,.08)',
-            }}
-          >
-            <CardContent>
-              <MemoryRoundedIcon
-                color="success"
-                sx={{
-                  fontSize: 38,
-                  mb: 1,
-                }}
-              />
-              <Typography color="text.secondary">Average CPU</Typography>
-              <Typography variant="h3" fontWeight={700}>
-                {avgCpu}%
-              </Typography>
-              <Chip label="Live" color="success" sx={{ mt: 2 }} />
-            </CardContent>
-          </Card>
+          <Grid size={{ xs: 12, md: 4 }}>
+            <Card sx={{ height: '100%', borderRadius: 4, boxShadow: '0 10px 30px rgba(15,23,42,.08)' }}>
+              <CardContent>
+                <MemoryRoundedIcon color="success" sx={{ fontSize: 38, mb: 1 }} />
+                <Typography color="text.secondary">Average CPU</Typography>
+                <Typography variant="h3" sx={{ fontWeight: 700 }}>
+                  {avgCpu}%
+                </Typography>
+                <Chip label="Live" color="success" sx={{ mt: 2 }} />
+              </CardContent>
+            </Card>
+          </Grid>
         </Grid>
-      </Grid>
+      </Box>
 
-      <Card
-        sx={{
-          width: '100%', // <-- ADDED to ensure bottom cards stretch fully too
-          borderRadius: 4,
-          boxShadow: '0 10px 30px rgba(15,23,42,.08)',
-          mb: 4,
-        }}
-      >
+      <Card sx={{ borderRadius: 4, boxShadow: '0 10px 30px rgba(15,23,42,.08)', mb: 4 }}>
         <CardContent>
-          <Typography variant="h5" fontWeight={700} sx={{ mb: 2 }}>
+          <Typography variant="h5" sx={{ fontWeight: 700, mb: 2 }}>
             Current Status
           </Typography>
 
-          <Typography
-            color="text.secondary"
-            sx={{
-              lineHeight: 1.8,
-            }}
-          >
+          <Typography color="text.secondary" sx={{ lineHeight: 1.8 }}>
             Your infrastructure is being monitored continuously. Asset health,
             performance metrics and security alerts are refreshed automatically
             every two seconds. Review critical alerts below and investigate any
@@ -216,25 +155,14 @@ export const Dashboard = () => {
         </CardContent>
       </Card>
 
-      <Card
-        sx={{
-          width: '100%', // <-- ADDED
-          borderRadius: 4,
-          boxShadow: '0 10px 30px rgba(15,23,42,.08)',
-        }}
-      >
+      <Card sx={{ borderRadius: 4, boxShadow: '0 10px 30px rgba(15,23,42,.08)' }}>
         <CardContent>
-          <Typography variant="h5" fontWeight={700} sx={{ mb: 3 }}>
+          <Typography variant="h5" sx={{ fontWeight: 700, mb: 3 }}>
             Recent Alerts
           </Typography>
 
           {alerts.length === 0 ? (
-            <Box
-              sx={{
-                py: 8,
-                textAlign: 'center',
-              }}
-            >
+            <Box sx={{ py: 8, textAlign: 'center' }}>
               <Typography variant="h6" color="text.secondary">
                 No alerts available.
               </Typography>
@@ -243,19 +171,29 @@ export const Dashboard = () => {
             <Stack spacing={2}>
               {alerts.slice(0, 5).map((alert, index) => {
                 const critical = alert.severity === 'CRITICAL';
+                
+                // Color configuration mapping based on asset metrics severity states
+                const statusColor = critical ? '#dc2626' : '#d97706';
+                const statusBg = critical ? 'rgba(254, 242, 242, 0.4)' : 'rgba(254, 243, 199, 0.4)';
+                const statusGlow = critical ? 'rgba(220, 38, 38, 0.08)' : 'rgba(217, 119, 6, 0.08)';
 
                 return (
                   <Card
                     key={alert.alertId ?? `${alert.assetName}-${index}`}
                     sx={{
-                      width: '100%', // <-- ADDED
                       borderRadius: 4,
-                      boxShadow: '0 10px 30px rgba(15,23,42,.08)',
-                      border: '1px solid #e5e7eb',
-                      transition: '.25s',
+                      // FIXED: Premium glassmorphism item list update matching system colors
+                      background: statusBg,
+                      backdropFilter: 'blur(12px)',
+                      WebkitBackdropFilter: 'blur(12px)',
+                      boxShadow: `0 4px 20px 0 ${statusGlow}`,
+                      border: '1px solid rgba(255, 255, 255, 0.4)',
+                      borderLeft: `5px solid ${statusColor}`, 
+                      transition: 'all 0.25s ease-in-out',
                       '&:hover': {
-                        transform: 'translateY(-3px)',
-                        boxShadow: '0 15px 35px rgba(15,23,42,.12)',
+                        transform: 'translateX(4px)',
+                        background: 'rgba(255, 255, 255, 0.85)',
+                        boxShadow: '0 10px 25px rgba(15,23,42,.08)',
                       },
                     }}
                   >
@@ -268,35 +206,32 @@ export const Dashboard = () => {
                           mb: 2,
                         }}
                       >
-                        <Typography variant="h6" fontWeight={700}>
+                        <Typography variant="h6" sx={{ fontWeight: 700 }}>
                           {alert.assetName ?? 'Unknown Asset'}
                         </Typography>
 
                         <Chip
                           label={alert.severity}
                           color={critical ? 'error' : 'warning'}
-                          sx={{
-                            fontWeight: 700,
-                          }}
+                          sx={{ fontWeight: 700, borderRadius: 2 }}
                         />
                       </Box>
 
-                      <Typography color="text.secondary">Metric</Typography>
-
-                      <Typography fontWeight={600} sx={{ mb: 2 }}>
-                        {alert.metricName}: {Math.round(alert.metricValue)}%
-                      </Typography>
-
-                      <Typography color="text.secondary">
-                        Suggested Action
-                      </Typography>
-
-                      <Typography sx={{ mb: 2 }}>{alert.solution}</Typography>
-
-                      <Chip
-                        label={alert.status}
-                        color={alert.status === 'OPEN' ? 'error' : 'success'}
-                      />
+                      <Grid container spacing={2} sx={{ mb: 1 }}>
+                        <Grid size={{ xs: 6, sm: 4 }}>
+                          <Typography variant="body2" color="text.secondary">Metric</Typography>
+                          <Typography variant="body1" sx={{ fontWeight: 600, color: statusColor }}>
+                            {alert.metricName}: {Math.round(alert.metricValue)}%
+                          </Typography>
+                        </Grid>
+                        
+                        <Grid size={{ xs: 6, sm: 8 }}>
+                          <Typography variant="body2" color="text.secondary">Suggested Action</Typography>
+                          <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                            {alert.solution}
+                          </Typography>
+                        </Grid>
+                      </Grid>
                     </CardContent>
                   </Card>
                 );

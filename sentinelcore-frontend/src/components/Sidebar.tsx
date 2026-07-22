@@ -9,16 +9,20 @@ import {
 import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import DnsRoundedIcon from '@mui/icons-material/DnsRounded';
 import ShieldRoundedIcon from '@mui/icons-material/ShieldRounded';
+import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 
 const menuItems = [
   {
     label: 'Dashboard',
-    // route: 'Dashboard',
     icon: <DashboardRoundedIcon fontSize="small" />,
   },
   {
     label: 'Assets',
     icon: <DnsRoundedIcon fontSize="small" />,
+  },
+  {
+    label: 'Incidents',
+    icon: <WarningRoundedIcon fontSize="small" />,
   },
 ];
 
@@ -30,20 +34,21 @@ type SidebarProps = {
 export const Sidebar = ({ activeView, onNavigate }: SidebarProps) => {
   return (
     <Box
-  sx={{
-    width: 260,
-    height: '100vh',
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    bgcolor: '#0f172a',
-    color: '#fff',
-    display: 'flex',
-    flexDirection: 'column',
-    borderRight: '1px solid rgba(255,255,255,0.08)',
-    zIndex: 1200,
-  }}
->
+      sx={{
+        width: 260,
+        height: '100vh',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        bgcolor: '#0f172a',
+        color: '#fff',
+        display: 'flex',
+        flexDirection: 'column',
+        borderRight: '1px solid rgba(255,255,255,0.08)',
+        zIndex: 1200,
+      }}
+    >
+      {/* Brand Header */}
       <Box
         sx={{
           p: 3,
@@ -57,11 +62,10 @@ export const Sidebar = ({ activeView, onNavigate }: SidebarProps) => {
             width: 42,
             height: 42,
             borderRadius: 2,
-            background:
-              'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)',
+            background: 'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'center', // Fixed key property from 'justify'
             boxShadow: '0 10px 25px rgba(37,99,235,0.35)',
           }}
         >
@@ -69,23 +73,10 @@ export const Sidebar = ({ activeView, onNavigate }: SidebarProps) => {
         </Box>
 
         <Box>
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: 700,
-              lineHeight: 1.2,
-            }}
-          >
+          <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
             SentinelCore
           </Typography>
-
-          <Typography
-            variant="caption"
-            sx={{
-              color: '#94a3b8',
-              letterSpacing: 1,
-            }}
-          >
+          <Typography variant="caption" sx={{ color: '#94a3b8', letterSpacing: 1 }}>
             Security Platform
           </Typography>
         </Box>
@@ -93,60 +84,59 @@ export const Sidebar = ({ activeView, onNavigate }: SidebarProps) => {
 
       <Divider sx={{ borderColor: 'rgba(255,255,255,0.08)' }} />
 
+      {/* Navigation Links */}
       <List sx={{ px: 2, py: 2 }}>
-        {menuItems.map((item) => (
-          <ListItemButton
-            key={item.label}
-            selected={activeView === item.label}
-            onClick={() => onNavigate(item.label)}
-            sx={{
-              borderRadius: 3,
-              mb: 1,
-              py: 1.4,
-              px: 2,
-              color: '#cbd5e1',
-              transition: 'all .25s ease',
-
-              '&:hover': {
-                bgcolor: 'rgba(255,255,255,0.08)',
-                transform: 'translateX(5px)',
-              },
-
-              '&.Mui-selected': {
-                background:
-                  'linear-gradient(90deg, #2563eb 0%, #4f46e5 100%)',
-                color: '#fff',
-                boxShadow: '0 8px 24px rgba(37,99,235,0.35)',
-
+        {menuItems.map((item) => {
+          const isSelected = activeView === item.label;
+          return (
+            <ListItemButton
+              key={item.label}
+              selected={isSelected}
+              onClick={() => onNavigate(item.label)}
+              sx={{
+                borderRadius: 3,
+                mb: 1,
+                py: 1.4,
+                px: 2,
+                color: isSelected ? '#fff' : '#cbd5e1',
+                transition: 'all .25s ease',
                 '&:hover': {
-                  background:
-                    'linear-gradient(90deg, #2563eb 0%, #4f46e5 100%)',
+                  bgcolor: 'rgba(255,255,255,0.08)',
+                  transform: 'translateX(5px)',
                 },
-              },
-            }}
-          >
-            <Box sx={{ mr: 2, display: 'flex', alignItems: 'center' }}>
-              {item.icon}
-            </Box>
-
-            <ListItemText
-              primary={item.label}
-              slotProps={{
-                primary: {
-                  sx: {
-                    fontWeight: activeView === item.label ? 700 : 500,
-                    fontSize: '0.95rem',
-                    color: activeView === item.label ? '#fff' : '#cbd5e1',
+                '&.Mui-selected': {
+                  background: 'linear-gradient(90deg, #2563eb 0%, #4f46e5 100%)',
+                  color: '#fff',
+                  boxShadow: '0 8px 24px rgba(37,99,235,0.35)',
+                  '&:hover': {
+                    background: 'linear-gradient(90deg, #2563eb 0%, #4f46e5 100%)',
                   },
                 },
               }}
-            />
-          </ListItemButton>
-        ))}
+            >
+              <Box sx={{ mr: 2, display: 'flex', alignItems: 'center' }}>
+                {item.icon}
+              </Box>
+              <ListItemText
+                primary={item.label}
+                slotProps={{
+                  primary: {
+                    sx: {
+                      fontWeight: isSelected ? 700 : 500,
+                      fontSize: '0.95rem',
+                      color: isSelected ? '#fff' : '#cbd5e1',
+                    },
+                  },
+                }}
+              />
+            </ListItemButton>
+          );
+        })}
       </List>
 
       <Box sx={{ flexGrow: 1 }} />
 
+      {/* Footer Info Box */}
       <Box
         sx={{
           m: 2,
@@ -156,23 +146,10 @@ export const Sidebar = ({ activeView, onNavigate }: SidebarProps) => {
           border: '1px solid rgba(255,255,255,0.08)',
         }}
       >
-        <Typography
-          variant="body2"
-          sx={{
-            fontWeight: 600,
-            color: '#fff',
-            mb: 0.5,
-          }}
-        >
+        <Typography variant="body2" sx={{ fontWeight: 600, color: '#fff', mb: 0.5 }}>
           Enterprise Security
         </Typography>
-
-        <Typography
-          variant="caption"
-          sx={{
-            color: '#94a3b8',
-          }}
-        >
+        <Typography variant="caption" sx={{ color: '#94a3b8' }}>
           Monitor infrastructure and assets from a unified dashboard.
         </Typography>
       </Box>

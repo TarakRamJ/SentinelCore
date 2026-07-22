@@ -130,6 +130,7 @@ export default function AssetsPage() {
   return (
     <Box
       sx={{
+        width: '100%',
         maxWidth: 1300,
         mx: 'auto',
         p: 4,
@@ -141,20 +142,19 @@ export default function AssetsPage() {
           p: 4,
           borderRadius: 4,
           color: '#fff',
-          background:
-            'linear-gradient(135deg,#2563eb 0%,#4f46e5 100%)',
-          boxShadow:
-            '0 20px 45px rgba(37,99,235,.25)',
+          background: 'linear-gradient(135deg,#2563eb 0%,#4f46e5 100%)',
+          boxShadow: '0 20px 45px rgba(37,99,235,.25)',
         }}
       >
+        {/* FIXED: Moved fontWeight to sx */}
         <Typography
           variant="h3"
-          fontWeight={700}
+          sx={{ fontWeight: 700 }}
         >
           Asset Management
         </Typography>
 
-        <Typography sx={{ mt: 1, opacity: .9 }}>
+        <Typography sx={{ mt: 1, opacity: 0.9 }}>
           Manage and monitor enterprise assets.
         </Typography>
       </Box>
@@ -170,10 +170,10 @@ export default function AssetsPage() {
         onSubmit={handleSubmit}
       />
 
+      {/* FIXED: Moved fontWeight to sx */}
       <Typography
         variant="h5"
-        fontWeight={700}
-        sx={{ mb: 2 }}
+        sx={{ fontWeight: 700, mb: 2 }}
       >
         Asset Inventory
       </Typography>

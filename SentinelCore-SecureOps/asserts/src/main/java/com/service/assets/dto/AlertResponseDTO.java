@@ -11,20 +11,18 @@ public class AlertResponseDTO {
     private String metricName;
     private float metricValue;
     private String severity;
-    private String status;
     private String solution;
 
     public AlertResponseDTO() {}
 
     public AlertResponseDTO(UUID alertId, UUID assetId, String assetName, String metricName, 
-                           float metricValue, String severity, String status, String solution) {
+                           float metricValue, String severity, String solution) {
         this.alertId = alertId;
         this.assetId = assetId;
         this.assetName = assetName;
         this.metricName = metricName;
         this.metricValue = metricValue;
         this.severity = severity;
-        this.status = status;
         this.solution = solution;
 
         if (assetName != null && assetName.contains("-")) {
@@ -61,9 +59,6 @@ public class AlertResponseDTO {
 
     public String getSeverity() { return severity; }
     public void setSeverity(String severity) { this.severity = severity; }
-
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
 
     public String getSolution() { return solution; }
     public void setSolution(String solution) { this.solution = solution; }

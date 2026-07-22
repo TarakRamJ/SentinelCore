@@ -29,7 +29,8 @@ export default function SearchAsset({
         <Stack
           direction={{ xs: 'column', md: 'row' }}
           spacing={2}
-          alignItems="center"
+          // FIXED: Moved alignItems from a direct prop into the sx object
+          sx={{ alignItems: 'center' }}
         >
           <TextField
             label="Search by IP Prefix"
@@ -52,12 +53,9 @@ export default function SearchAsset({
               height: 56,
               borderRadius: 3,
               fontWeight: 700,
-              background:
-                'linear-gradient(90deg,#2563eb,#4f46e5)',
-
+              background: 'linear-gradient(90deg,#2563eb,#4f46e5)',
               '&:hover': {
-                background:
-                  'linear-gradient(90deg,#1d4ed8,#4338ca)',
+                background: 'linear-gradient(90deg,#1d4ed8,#4338ca)',
               },
             }}
           >

@@ -3,7 +3,7 @@ import {
   Card,
   CardContent,
   Chip,
-  Stack,
+  Grid,
   Typography,
 } from '@mui/material';
 
@@ -11,6 +11,30 @@ import type { Asset } from '../../types';
 
 type AssetListProps = {
   assets: Asset[];
+};
+
+// Helper function to extract status styles cleanly
+const getStatusStyles = (status: Asset['status']) => {
+  switch (status) {
+    case 'HEALTHY':
+      return {
+        color: '#16a34a',
+        glow: 'rgba(22, 163, 74, 0.18)',
+        glassBg: 'rgba(240, 253, 244, 0.45)',
+      };
+    case 'WARNING':
+      return {
+        color: '#d97706',
+        glow: 'rgba(217, 119, 6, 0.18)',
+        glassBg: 'rgba(254, 243, 199, 0.45)',
+      };
+    default: // CRITICAL
+      return {
+        color: '#dc2626',
+        glow: 'rgba(220, 38, 38, 0.18)',
+        glassBg: 'rgba(254, 242, 242, 0.45)',
+      };
+  }
 };
 
 export default function AssetList({
@@ -21,7 +45,11 @@ export default function AssetList({
       <Card
         sx={{
           borderRadius: 4,
-          boxShadow: '0 10px 30px rgba(15,23,42,.08)',
+          background: 'rgba(255, 255, 255, 0.5)',
+          backdropFilter: 'blur(20px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+          border: '1px solid rgba(255, 255, 255, 0.6)',
+          boxShadow: '0 8px 32px rgba(31, 38, 135, 0.12)',
         }}
       >
         <CardContent
@@ -32,8 +60,8 @@ export default function AssetList({
         >
           <Typography
             variant="h6"
-            fontWeight={600}
             color="text.secondary"
+            sx={{ fontWeight: 600 }}
           >
             No Assets Found
           </Typography>
@@ -50,76 +78,95 @@ export default function AssetList({
   }
 
   return (
-    <Stack spacing={2}>
-      {assets.map((asset) => (
-        <Card
-          key={asset.assetId}
-          sx={{
-            borderRadius: 4,
-            border: '1px solid #e5e7eb',
-            boxShadow: '0 8px 24px rgba(15,23,42,.06)',
-            transition: '.25s',
+    <Grid container spacing={3} sx={{ width: '100%', m: 0 }}>
+      {assets.map((asset) => {
+        const statusConfig = getStatusStyles(asset.status);
 
-            '&:hover': {
-              transform: 'translateY(-4px)',
-              boxShadow:
-                '0 18px 40px rgba(15,23,42,.12)',
-            },
-          }}
-        >
-          <CardContent
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <Box>
-
-              <Typography
-                variant="h6"
-                fontWeight={700}
-              >
-                {asset.name}
-              </Typography>
-
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ mt: .5 }}
-              >
-                {asset.type}
-              </Typography>
-
-              <Typography
-                variant="body2"
-                color="text.secondary"
-              >
-                {asset.ip}
-              </Typography>
-
-            </Box>
-
-            <Chip
-              label={asset.status}
+        return (
+          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={asset.assetId}>
+            <Card
               sx={{
-                minWidth: 100,
-                fontWeight: 700,
-                color: '#fff',
-                borderRadius: 2,
+                height: '100%',
+                borderRadius: 4,
+                position: 'relative',
+                overflow: 'hidden',
+                background: statusConfig.glassBg,
+                backdropFilter: 'blur(20px) saturate(180%)',
+                WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+                border: '1px solid rgba(255, 255, 255, 0.6)',
+                boxShadow: `0 8px 32px 0 ${statusConfig.glow}`,
+                transition: 'all .25s ease-in-out',
 
-                bgcolor:
-                  asset.status === 'HEALTHY'
-                    ? '#16a34a'
-                    : asset.status === 'WARNING'
-                    ? '#f59e0b'
-                    : '#dc2626',
+                // top sheen, consistent with the rest of the app's glass panels
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  inset: 0,
+                  background:
+                    'linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 45%)',
+                  pointerEvents: 'none',
+                },
+
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  background: 'rgba(255, 255, 255, 0.75)',
+                  boxShadow: '0 18px 40px rgba(15,23,42,.14)',
+                },
               }}
-            />
+            >
+              <CardContent
+                sx={{
+                  position: 'relative',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: '100%',
+                  justifyContent: 'space-between',
+                  gap: 2,
+                }}
+              >
+                <Box>
+                  <Typography
+                    variant="h6"
+                    sx={{ fontWeight: 700 }}
+                  >
+                    {asset.name}
+                  </Typography>
 
-          </CardContent>
-        </Card>
-      ))}
-    </Stack>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mt: 0.5 }}
+                  >
+                    {asset.type}
+                  </Typography>
+
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                  >
+                    {asset.ip}
+                  </Typography>
+                </Box>
+
+                <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
+                  <Chip
+                    label={asset.status}
+                    sx={{
+                      minWidth: 100,
+                      borderRadius: 2,
+                      fontWeight: 700,
+                      color: '#fff',
+                      bgcolor: statusConfig.color,
+                      border: '1px solid rgba(255, 255, 255, 0.4)',
+                      boxShadow: `0 4px 14px ${statusConfig.glow}`,
+                    }}
+                  />
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        );
+      })}
+    </Grid>
   );
 }

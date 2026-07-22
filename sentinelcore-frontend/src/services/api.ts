@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Asset, PerformanceMetric, Alert } from '../types';
+import type { Asset, PerformanceMetric, Alert,Incident, IncidentStats } from '../types';
 
 const API = axios.create({
   baseURL: 'http://localhost:8080',
@@ -62,6 +62,12 @@ API.interceptors.response.use(
   },
 );
 
+export interface LoginResponse {
+  token: string;
+  role: 'ADMIN' | 'EMPLOYEE';
+  username: string;        
+}
+
 export const loginUser = async (credentials: { username: string; password: string }) => {
   const response = await API.post('/auth/login', credentials);
   return response.data;
@@ -96,5 +102,22 @@ export const getMetrics = async (): Promise<PerformanceMetric[]> => {
 
 export const getAlerts = async (): Promise<Alert[]> => {
   const response = await API.get('/api/alerts');
+  return response.data;
+};
+
+//Milestone 2
+
+export const getIncidents = async (): Promise<Incident[]> => {
+  const response = await API.get('/api/incidents');
+  return response.data;
+};
+
+export const getIncidentStats = async (): Promise<IncidentStats> => {
+  const response = await API.get('/api/incidents/stats');
+  return response.data;
+};
+
+export const updateIncidentStatus = async (id: string, status: string): Promise<Incident> => {
+  const response = await API.put(`/api/incidents/${id}/status?status=${status}`);
   return response.data;
 };

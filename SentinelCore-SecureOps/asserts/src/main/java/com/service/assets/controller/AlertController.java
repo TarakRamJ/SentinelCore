@@ -44,14 +44,10 @@ public class AlertController {
                     alert.getMetricName(),
                     alert.getViolationValue(),
                     alert.getSeverity().toString(),
-                    alert.isResolved() ? "RESOLVED" : "OPEN",
                     alert.getSolution() != null ? alert.getSolution() : "Investigating"
                 );
                 
-                // Set the server type and name if available
-                if (alert.getServerType() != null) {
-                    dto.setServerType(alert.getServerType());
-                }
+                // Set the server name if available
                 if (alert.getServerName() != null) {
                     dto.setServerName(alert.getServerName());
                 }
