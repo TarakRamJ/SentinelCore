@@ -149,7 +149,3 @@ The frontend expects the API gateway to be running (default `http://localhost:80
 ## 🤝 Contributing
 
 Contributions, issues, and feature requests are welcome. Please open an issue first to discuss what you'd like to change.
-
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE).
