@@ -9,4 +9,8 @@ public interface AlertRepository extends JpaRepository<Alert, UUID> {
     List<Alert> findByAssetId(UUID assetId);
     List<Alert> findAllByOrderByCreatedAtAsc();
     long count();
+
+    List<Alert> findTop5ByOrderByCreatedAtDesc();
+
+    long countBySeverity(Alert.AlertSeverity severity);
 }

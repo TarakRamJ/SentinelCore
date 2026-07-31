@@ -23,6 +23,23 @@ public class SecurityConfig {
     public SecurityConfig(JwtFilter jwtFilter) {
         this.jwtFilter = jwtFilter;
     }
+//
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .csrf(csrf -> csrf.disable())
+//                .cors(cors -> {})
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers("/auth/**").permitAll()
+//                        .requestMatchers(HttpMethod.POST, "/api/v1/assets").hasRole("ADMIN")
+//                        .anyRequest().authenticated())
+//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+//
+//        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+//
+//        return http.build();
+//    }
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -31,6 +48,9 @@ public class SecurityConfig {
                 .cors(cors -> {})
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/api/dashboard/**").permitAll()
+                        .requestMatchers("/api/metrics/**").permitAll()
+                        .requestMatchers("/api/v1/vulnerabilities/**").permitAll() // <-- Added for Milestone 3
                         .requestMatchers(HttpMethod.POST, "/api/v1/assets").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

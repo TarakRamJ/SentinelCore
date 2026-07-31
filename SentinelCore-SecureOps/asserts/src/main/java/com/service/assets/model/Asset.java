@@ -53,8 +53,8 @@ public class Asset {
 
     public UUID getAssetId() { return assetId; }
     public void setAssetId(UUID assetId) { this.assetId = assetId; }
-    public String getip(){ return ip; }
-    public void setip(String ip){ this.ip=ip; }
+    public String getIp(){ return ip; }
+    public void setIp(String ip){ this.ip=ip; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public AssetType getType() { return type; }

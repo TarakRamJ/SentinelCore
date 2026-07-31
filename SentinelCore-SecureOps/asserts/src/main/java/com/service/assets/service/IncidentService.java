@@ -24,7 +24,7 @@ public class IncidentService {
         incident.setSeverity(Incident.IncidentSeverity.CRITICAL);
         incident.setStatus(Incident.IncidentStatus.OPEN);
         incident.setType("Infrastructure Resource Exhaustion");
-        incident.setSourceIp(asset.getip());
+        incident.setSourceIp(asset.getIp());
         incident.setImpactSummary(String.format("Critical load on %s | CPU: %.1f%% | Mem: %.1f%%",
                 asset.getName(), metric.getCpuUsage(), metric.getMemoryUsage()));
         incident.setAssignedTeam("Cloud Operations Team");

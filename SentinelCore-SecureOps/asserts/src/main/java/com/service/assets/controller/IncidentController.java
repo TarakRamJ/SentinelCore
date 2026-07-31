@@ -29,6 +29,11 @@ public class IncidentController {
         return incidentRepository.save(incident);
     }
 
+    @GetMapping("/cirital")
+    public List<Incident> getAllCirticalIncidents(){
+        return incidentRepository.findBySeverityAndStatusNot(Incident.IncidentSeverity.CRITICAL, Incident.IncidentStatus.RESOLVED);
+    }
+
     // Endpoint to update state transition workflows via UI command choices
     @PutMapping("/{id}/status")
     public ResponseEntity<Incident> updateIncidentStatus(

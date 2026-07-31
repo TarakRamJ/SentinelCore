@@ -14,4 +14,6 @@ public interface AssetRepository extends JpaRepository<Asset, UUID> {
 
     @Query("Select a From Asset a where a.ip like concat(:prefix,'%')")
     List<Asset> findByIpPrefix(@Param("prefix") String prefix);
+
+    long countByStatus(Asset.HealthStatus status);
 }
