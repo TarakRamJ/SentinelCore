@@ -10,7 +10,6 @@ SentinelCore SecureOps is a cloud-native platform for monitoring, auditing, and 
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-DB-336791?logo=postgresql&logoColor=white)
 ![Kafka](https://img.shields.io/badge/Apache%20Kafka-Event%20Streaming-231F20?logo=apachekafka)
 ![Keycloak](https://img.shields.io/badge/Keycloak-IAM-4D4D4D?logo=keycloak)
-![License](https://img.shields.io/badge/license-MIT-blue)
 
 ---
 
