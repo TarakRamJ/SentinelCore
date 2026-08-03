@@ -1,4 +1,4 @@
-# 🛡️ SentinelCore SecureOps
+# SentinelCore SecureOps
 
 **Enterprise Security Operations & Infrastructure Monitoring Platform**
 
@@ -8,12 +8,10 @@ SentinelCore SecureOps is a cloud-native platform for monitoring, auditing, and 
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4-brightgreen?logo=springboot)
 ![React](https://img.shields.io/badge/React-20-61DAFB?logo=react&logoColor=black)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-DB-336791?logo=postgresql&logoColor=white)
-![Kafka](https://img.shields.io/badge/Apache%20Kafka-Event%20Streaming-231F20?logo=apachekafka)
-![Keycloak](https://img.shields.io/badge/Keycloak-IAM-4D4D4D?logo=keycloak)
 
 ---
 
-## 📌 Overview
+## Overview
 
 | | |
 |---|---|
@@ -28,7 +26,7 @@ The platform is organized around six core microservices — **User**, **Asset**,
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 SentinelCore follows a 9-layer architecture:
 
@@ -58,7 +56,7 @@ Infrastructure Telemetry → Security Monitoring → Incident Detection
 
 ---
 
-## 🧰 Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |---|---|
@@ -73,7 +71,7 @@ Infrastructure Telemetry → Security Monitoring → Incident Detection
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 SentinelCore/
@@ -83,7 +81,7 @@ SentinelCore/
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Java 25 (JDK)
@@ -116,7 +114,7 @@ The frontend expects the API gateway to be running (default `http://localhost:80
 
 ---
 
-## 📦 Milestones
+## Milestones
 
 | Milestone | Weeks | Focus |
 |---|---|---|
@@ -127,7 +125,7 @@ The frontend expects the API gateway to be running (default `http://localhost:80
 
 ---
 
-## 🔐 Security & Compliance
+## Security & Compliance
 
 - RBAC enforced via Keycloak for **Super Admin**, **Security Admin**, and **Auditor** roles
 - All critical actions require approval and are logged immutably via Kafka event ordering
@@ -136,15 +134,10 @@ The frontend expects the API gateway to be running (default `http://localhost:80
 
 ---
 
-## 🗺️ Roadmap
+## Roadmap
 
 - [ ] CI/CD pipeline (GitHub Actions)
 - [ ] Helm charts for Kubernetes deployment
 - [ ] AI-assisted anomaly detection (future phase)
 - [ ] Multi-tenant support
 
----
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome. Please open an issue first to discuss what you'd like to change.
