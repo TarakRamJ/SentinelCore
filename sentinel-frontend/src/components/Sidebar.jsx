@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Server, ShieldAlert, Bug, Activity, Bell } from 'lucide-react';
+import { AuthContext } from '../context/AuthContext';
+import { LayoutDashboard, Server, ShieldAlert, Bug, Activity, Bell, Users, ClipboardList } from 'lucide-react';
 
 export const Sidebar = () => {
+  const { user } = useContext(AuthContext);
+
   return (
     <div className="sidebar">
       <ul className="sidebar-nav">
@@ -36,6 +39,22 @@ export const Sidebar = () => {
             <Activity size={18} /> System Metrics
           </NavLink>
         </li>
+
+        {/* REQUESTS LINK FOR ALL LOGGED-IN USERS */}
+        <li>
+          <NavLink to="/requests" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+            <ClipboardList size={18} /> Requests & Messages
+          </NavLink>
+        </li>
+
+        {/* ADMIN ONLY LINK */}
+        {user?.role === 'ADMIN' && (
+          <li>
+            <NavLink to="/users" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+              <Users size={18} /> Manage Users
+            </NavLink>
+          </li>
+        )}
       </ul>
     </div>
   );

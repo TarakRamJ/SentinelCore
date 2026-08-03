@@ -30,4 +30,5 @@ public class MetricController {
     public ResponseEntity<List<com.service.assets.dto.MonitoringChartDTO>> getMonitoringHistory(@PathVariable UUID assetId) {
         return ResponseEntity.ok(dashboardService.getMonitoringHistory(assetId));
     }
+
 }

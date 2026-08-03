@@ -1,7 +1,6 @@
 package com.service.assets.model;
 
 import jakarta.persistence.*;
-
 import java.time.OffsetDateTime;
 
 @Entity
@@ -28,7 +27,13 @@ public class User {
     @Column(name="created_at")
     private OffsetDateTime createdAt;
 
-    public enum MyRole {ADMIN,EMPLOYEE};
+    // EXPANDED ROLES
+    public enum MyRole {
+        ADMIN,
+        SECURITY_ANALYST,
+        DEVOPS_ENGINEER,
+        EMPLOYEE
+    }
 
     public User(){}
 
@@ -40,51 +45,21 @@ public class User {
         this.createdAt = createdAt;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
-    public String getUsername() {
-        return username;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
-    public String getEmail() {
-        return email;
-    }
+    public MyRole getRole() { return role; }
+    public void setRole(MyRole role) { this.role = role; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public MyRole getRole() {
-        return role;
-    }
-
-    public void setRole(MyRole role) {
-        this.role = role;
-    }
-
-    public OffsetDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(OffsetDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+    public OffsetDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
 }

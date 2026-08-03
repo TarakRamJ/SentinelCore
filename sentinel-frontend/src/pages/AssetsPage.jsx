@@ -3,12 +3,18 @@ import API from "../services/api";
 import { AuthContext } from "../context/AuthContext";
 import { CustomLoader } from "../components/CustomLoader";
 import { StatusBadge } from "../components/StatusBadge";
-import { Lock, Eye, Edit, Trash2, X, Check, AlertTriangle } from "lucide-react";
+import { Eye, Edit, Trash2, X, Check, AlertTriangle, AlertCircle } from "lucide-react";
 
 export const AssetsPage = () => {
   const { user } = useContext(AuthContext);
   const [assets, setAssets] = useState([]);
   const [searchPrefix, setSearchPrefix] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [actionError, setActionError] = useState("");
+
+  const canManageAssets =
+    user?.role === "ADMIN" || user?.role === "DEVOPS_ENGINEER";
+
   const [formData, setFormData] = useState({
     name: "",
     ip: "",
@@ -16,9 +22,8 @@ export const AssetsPage = () => {
     status: "HEALTHY",
   });
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(true);
 
-  // Modal States for View, Edit, & Custom Delete
+  // Modal States
   const [selectedAsset, setSelectedAsset] = useState(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -38,6 +43,7 @@ export const AssetsPage = () => {
       setAssets(res.data);
     } catch (err) {
       console.error("Assets fetch error:", err);
+      setActionError("Failed to fetch assets catalog.");
     } finally {
       setLoading(false);
     }
@@ -61,11 +67,13 @@ export const AssetsPage = () => {
   // CREATE Asset
   const handleRegister = async (e) => {
     e.preventDefault();
+    setActionError("");
     const errs = validateForm(formData);
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
       return;
     }
+
     const payload = {
       ...formData,
       name: formData.name.trim().toLowerCase(),
@@ -78,7 +86,7 @@ export const AssetsPage = () => {
       setFormData({ name: "", ip: "", type: "SERVER", status: "HEALTHY" });
       setErrors({});
     } catch (err) {
-      alert("Asset registration failed.");
+      setActionError("Asset registration failed. Check inputs or connection.");
     }
   };
 
@@ -90,10 +98,7 @@ export const AssetsPage = () => {
 
   // OPEN Edit Modal
   const handleOpenEditModal = (asset) => {
-    if (user?.role !== "ADMIN") {
-      alert("Access Denied: Only ADMIN users can edit assets.");
-      return;
-    }
+    if (!canManageAssets) return;
     setSelectedAsset(asset);
     setEditFormData({
       name: asset.name,
@@ -108,6 +113,7 @@ export const AssetsPage = () => {
   // UPDATE Asset
   const handleUpdateAsset = async (e) => {
     e.preventDefault();
+    setActionError("");
     const errs = validateForm(editFormData);
     if (Object.keys(errs).length > 0) {
       setEditErrors(errs);
@@ -117,24 +123,21 @@ export const AssetsPage = () => {
     try {
       const res = await API.put(
         `/api/v1/assets/${selectedAsset.assetId}`,
-        editFormData,
+        editFormData
       );
       setAssets(
-        assets.map((a) => (a.assetId === selectedAsset.assetId ? res.data : a)),
+        assets.map((a) => (a.assetId === selectedAsset.assetId ? res.data : a))
       );
       setIsEditModalOpen(false);
       setSelectedAsset(null);
     } catch (err) {
-      alert("Failed to update asset.");
+      setActionError("Failed to update asset details.");
     }
   };
 
-  // PROMPT Custom Glass Modal for Deleting Asset
+  // PROMPT Delete Modal
   const handlePromptDelete = (asset) => {
-    if (user?.role !== "ADMIN") {
-      alert("Access Denied: Only ADMIN users can delete assets.");
-      return;
-    }
+    if (!canManageAssets) return;
     setSelectedAsset(asset);
     setIsDeleteModalOpen(true);
   };
@@ -142,6 +145,7 @@ export const AssetsPage = () => {
   // CONFIRM Delete Operation
   const handleConfirmDelete = async () => {
     if (!selectedAsset) return;
+    setActionError("");
 
     try {
       await API.delete(`/api/v1/assets/${selectedAsset.assetId}`);
@@ -149,7 +153,7 @@ export const AssetsPage = () => {
       setIsDeleteModalOpen(false);
       setSelectedAsset(null);
     } catch (err) {
-      alert("Failed to delete asset.");
+      setActionError("Failed to delete asset.");
     }
   };
 
@@ -177,13 +181,32 @@ export const AssetsPage = () => {
         Infrastructure Assets
       </h2>
 
-      {/* ADMIN-ONLY REGISTRATION FORM */}
-      {user?.role === "ADMIN" ? (
-        <div className="form-panel">
+      {/* ERROR FEEDBACK */}
+      {actionError && (
+        <div
+          className="form-panel"
+          style={{
+            marginBottom: "20px",
+            padding: "12px 16px",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            borderLeft: "4px solid #f5222d",
+            backgroundColor: "rgba(245, 34, 45, 0.1)",
+          }}
+        >
+          <AlertCircle size={18} color="#f5222d" />
+          <span style={{ color: "#fff", fontSize: "0.9rem" }}>{actionError}</span>
+        </div>
+      )}
+
+      {/* REGISTRATION FORM - VISIBLE ONLY TO AUTHORIZED ROLES */}
+      {canManageAssets && (
+        <div className="form-panel" style={{ marginBottom: "20px" }}>
           <h4
             style={{ color: "var(--sentinelcore-text-muted)", marginBottom: "15px" }}
           >
-            Register Asset (Admin Authorization)
+            Register Asset
           </h4>
           <form onSubmit={handleRegister}>
             <div className="form-grid">
@@ -195,7 +218,7 @@ export const AssetsPage = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
-                  placeholder="e.g. DB-SRV-12"
+                  placeholder="DB-SRV-12"
                 />
                 {errors.name && (
                   <span className="field-error-msg">{errors.name}</span>
@@ -258,21 +281,9 @@ export const AssetsPage = () => {
             </button>
           </form>
         </div>
-      ) : (
-        <div
-          className="form-panel"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            color: "#8c9ba5",
-          }}
-        >
-          <Lock size={16} /> Asset registration restricted to ADMIN users only.
-        </div>
       )}
 
-      {/* Asset Table */}
+      {/* ASSET TABLE */}
       <div className="table-panel">
         <div
           style={{
@@ -317,7 +328,6 @@ export const AssetsPage = () => {
                 </td>
                 <td>
                   <div style={{ display: "flex", gap: "8px" }}>
-                    {/* READ ACTION */}
                     <button
                       className="btn-glass btn-blue"
                       style={{
@@ -333,40 +343,37 @@ export const AssetsPage = () => {
                       <Eye size={14} /> View
                     </button>
 
-                    {/* UPDATE ACTION (ADMIN) */}
-                    {user?.role === "ADMIN" && (
-                      <button
-                        className="btn-glass btn-orange"
-                        style={{
-                          padding: "4px 10px",
-                          fontSize: "0.8rem",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "4px",
-                        }}
-                        onClick={() => handleOpenEditModal(asset)}
-                        title="Edit Asset"
-                      >
-                        <Edit size={14} /> Edit
-                      </button>
-                    )}
-
-                    {/* DELETE ACTION (ADMIN) */}
-                    {user?.role === "ADMIN" && (
-                      <button
-                        className="btn-glass btn-red"
-                        style={{
-                          padding: "4px 10px",
-                          fontSize: "0.8rem",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "4px",
-                        }}
-                        onClick={() => handlePromptDelete(asset)}
-                        title="Delete Asset"
-                      >
-                        <Trash2 size={14} /> Delete
-                      </button>
+                    {canManageAssets && (
+                      <>
+                        <button
+                          className="btn-glass btn-orange"
+                          style={{
+                            padding: "4px 10px",
+                            fontSize: "0.8rem",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "4px",
+                          }}
+                          onClick={() => handleOpenEditModal(asset)}
+                          title="Edit Asset"
+                        >
+                          <Edit size={14} /> Edit
+                        </button>
+                        <button
+                          className="btn-glass btn-red"
+                          style={{
+                            padding: "4px 10px",
+                            fontSize: "0.8rem",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "4px",
+                          }}
+                          onClick={() => handlePromptDelete(asset)}
+                          title="Delete Asset"
+                        >
+                          <Trash2 size={14} /> Delete
+                        </button>
+                      </>
                     )}
                   </div>
                 </td>
@@ -551,7 +558,9 @@ export const AssetsPage = () => {
                 <div className="form-field">
                   <label>Asset Name</label>
                   <input
-                    className={`form-input ${editErrors.name ? "is-invalid" : ""}`}
+                    className={`form-input ${
+                      editErrors.name ? "is-invalid" : ""
+                    }`}
                     value={editFormData.name}
                     onChange={(e) =>
                       setEditFormData({ ...editFormData, name: e.target.value })
@@ -565,7 +574,9 @@ export const AssetsPage = () => {
                 <div className="form-field">
                   <label>IP Address</label>
                   <input
-                    className={`form-input ${editErrors.ip ? "is-invalid" : ""}`}
+                    className={`form-input ${
+                      editErrors.ip ? "is-invalid" : ""
+                    }`}
                     value={editFormData.ip}
                     onChange={(e) =>
                       setEditFormData({ ...editFormData, ip: e.target.value })
@@ -642,7 +653,7 @@ export const AssetsPage = () => {
         </div>
       )}
 
-      {/* CUSTOM ASSET DELETE CONFIRMATION MODAL */}
+      {/* DELETE ASSET CONFIRMATION MODAL */}
       {isDeleteModalOpen && selectedAsset && (
         <div
           style={{

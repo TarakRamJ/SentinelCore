@@ -1,5 +1,6 @@
 package com.service.assets.controller;
 
+import com.service.assets.model.Asset;
 import com.service.assets.model.Incident;
 import com.service.assets.repo.IncidentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,5 +74,12 @@ public class IncidentController {
         stats.put("mttr", mttrMinutes);
 
         return ResponseEntity.ok(stats);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Incident> getIncidentById(@PathVariable("id") UUID incidentId){
+        return incidentRepository.findById(incidentId)
+                .map(ResponseEntity :: ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }

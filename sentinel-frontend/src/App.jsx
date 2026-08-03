@@ -4,7 +4,7 @@ import { AuthContext, AuthProvider } from './context/AuthContext';
 
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
-
+import { UsersPage } from './pages/UsersPage';
 import { LandingPage } from './pages/LandingPage';
 import { AuthPage } from './pages/AuthPage';
 import { DashboardPage } from './pages/DashboardPage';
@@ -13,6 +13,7 @@ import { AssetsPage } from './pages/AssetsPage';
 import { IncidentsPage } from './pages/IncidentsPage';
 import { VulnerabilitiesPage } from './pages/VulnerabilitiesPage';
 import { MetricsPage } from './pages/MetricsPage';
+import RequestsPage from './pages/RequestsPage';
 
 import './App.css';
 
@@ -52,6 +53,8 @@ const AppRoutes = () => {
           <Route path="/incidents" element={<IncidentsPage />} />
           <Route path="/vulnerabilities" element={<VulnerabilitiesPage />} />
           <Route path="/metrics" element={<MetricsPage />} />
+          <Route path="/requests" element={<RequestsPage />} />
+          <Route path="/users" element={<UsersPage />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </div>

@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import API from "../services/api";
-import { Shield } from "lucide-react";
+import { Shield, CheckCircle2, AlertCircle } from "lucide-react";
 
 export const AuthPage = () => {
   const { login } = useContext(AuthContext);
@@ -14,6 +14,7 @@ export const AuthPage = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const validate = () => {
     const errs = {};
@@ -39,6 +40,8 @@ export const AuthPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setApiError("");
+    setSuccessMessage("");
+
     if (!validate()) return;
 
     setLoading(true);
@@ -59,8 +62,11 @@ export const AuthPage = () => {
         login(response.data);
       } else {
         await API.post("/auth/register", payload);
+        
+        // Reset form & set clean UI feedback
+        setFormData({ username: "", email: "", password: "" });
         setIsLoginMode(true);
-        alert("Registration successful! Please sign in.");
+        setSuccessMessage("Account created successfully! Please sign in with your credentials.");
       }
     } catch (err) {
       setApiError(err.response?.data?.message || "Authentication error.");
@@ -90,20 +96,54 @@ export const AuthPage = () => {
           }}
         >
           <Shield size={28} color="#52c41a" />
-          <h2 style={{ color: "#52c41a", margin: 0 }}>sentinelcore </h2>
+          <h2 style={{ color: "#52c41a", margin: 0 }}>sentinelcore</h2>
         </div>
         <h3
           style={{ textAlign: "center", marginBottom: "20px", color: "#fff" }}
         >
-          {isLoginMode ? "Sign In to   SOC" : "Register SOC Account"}
+          {isLoginMode ? "Sign In to SOC" : "Register SOC Account"}
         </h3>
 
+        {/* SUCCESS NOTIFICATION BANNER */}
+        {successMessage && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "10px 12px",
+              marginBottom: "16px",
+              borderRadius: "6px",
+              backgroundColor: "rgba(82, 196, 26, 0.15)",
+              border: "1px solid rgba(82, 196, 26, 0.3)",
+              color: "#52c41a",
+              fontSize: "0.85rem",
+              lineHeight: 1.4,
+            }}
+          >
+            <CheckCircle2 size={18} style={{ flexShrink: 0 }} />
+            <span>{successMessage}</span>
+          </div>
+        )}
+
+        {/* ERROR BANNER */}
         {apiError && (
           <div
-            className="field-error-msg"
-            style={{ textAlign: "center", marginBottom: "10px" }}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "10px 12px",
+              marginBottom: "16px",
+              borderRadius: "6px",
+              backgroundColor: "rgba(245, 34, 45, 0.15)",
+              border: "1px solid rgba(245, 34, 45, 0.3)",
+              color: "#f5222d",
+              fontSize: "0.85rem",
+            }}
           >
-            {apiError}
+            <AlertCircle size={18} style={{ flexShrink: 0 }} />
+            <span>{apiError}</span>
           </div>
         )}
 
@@ -177,6 +217,7 @@ export const AuthPage = () => {
             setIsLoginMode(!isLoginMode);
             setErrors({});
             setApiError("");
+            setSuccessMessage("");
           }}
         >
           {isLoginMode

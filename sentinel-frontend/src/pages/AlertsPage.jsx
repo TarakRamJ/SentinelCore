@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 import API from '../services/api';
 import { CustomLoader } from '../components/CustomLoader';
 import { StatusBadge } from '../components/StatusBadge';
-import { Bell, ShieldAlert } from 'lucide-react';
+import { Bell, ShieldAlert, Eye, X } from 'lucide-react';
 
 export const AlertsPage = () => {
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Modal States for Viewing Single Alert
+  const [selectedAlert, setSelectedAlert] = useState(null);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
 
   useEffect(() => {
     API.get('/api/dashboard/recent-alerts')
@@ -14,6 +18,11 @@ export const AlertsPage = () => {
       .catch((err) => console.error('Alerts fetch error:', err))
       .finally(() => setLoading(false));
   }, []);
+
+  const handleViewAlert = (alert) => {
+    setSelectedAlert(alert);
+    setIsViewModalOpen(true);
+  };
 
   if (loading) return <CustomLoader message="Loading Real-Time SOC Alerts..." />;
 
@@ -34,6 +43,7 @@ export const AlertsPage = () => {
               <th>Violation Value</th>
               <th>Severity</th>
               <th>Recommended Remediation</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -46,11 +56,27 @@ export const AlertsPage = () => {
                   <td style={{ color: 'var(--sentinelcore-orange)', fontWeight: 600 }}>{alt.metricValue}%</td>
                   <td><StatusBadge status={alt.severity} /></td>
                   <td>{alt.solution || 'Auto-scaling policy executed'}</td>
+                  <td>
+                    <button
+                      className="btn-glass btn-blue"
+                      style={{
+                        padding: '4px 10px',
+                        fontSize: '0.8rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                      onClick={() => handleViewAlert(alt)}
+                      title="View Details"
+                    >
+                      <Eye size={14} /> View
+                    </button>
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="6" style={{ textAlign: 'center', color: '#8c9ba5', padding: '20px' }}>
+                <td colSpan="7" style={{ textAlign: 'center', color: '#8c9ba5', padding: '20px' }}>
                   No active infrastructure alerts recorded.
                 </td>
               </tr>
@@ -58,6 +84,63 @@ export const AlertsPage = () => {
           </tbody>
         </table>
       </div>
+
+      {/* VIEW SINGLE ALERT MODAL */}
+      {isViewModalOpen && selectedAlert && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0,0,0,0.8)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+          }}
+        >
+          <div className="form-panel" style={{ width: '480px', marginBottom: 0 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h3 style={{ margin: 0, color: '#fff' }}>Alert Overview</h3>
+              <X size={20} color="#a0aec0" style={{ cursor: 'pointer' }} onClick={() => setIsViewModalOpen(false)} />
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '0.95rem' }}>
+              <div>
+                <span style={{ fontSize: '0.78rem', color: '#8c9ba5', display: 'block' }}>ALERT ID</span>
+                <span style={{ fontFamily: 'monospace', fontWeight: 600 }}>{selectedAlert.alertId || 'N/A'}</span>
+              </div>
+              <div>
+                <span style={{ fontSize: '0.78rem', color: '#8c9ba5', display: 'block' }}>SERVER / ASSET NAME</span>
+                <span style={{ fontWeight: 600, color: '#fff' }}>{selectedAlert.assetName || selectedAlert.serverName || 'DB-SRV-12'}</span>
+              </div>
+              <div>
+                <span style={{ fontSize: '0.78rem', color: '#8c9ba5', display: 'block' }}>METRIC VIOLATION</span>
+                <span>{selectedAlert.metricName} ({selectedAlert.metricValue}%)</span>
+              </div>
+              <div>
+                <span style={{ fontSize: '0.78rem', color: '#8c9ba5', display: 'block' }}>SEVERITY</span>
+                <StatusBadge status={selectedAlert.severity} />
+              </div>
+              <div>
+                <span style={{ fontSize: '0.78rem', color: '#8c9ba5', display: 'block', marginBottom: '4px' }}>RECOMMENDED REMEDIATION</span>
+                <span>{selectedAlert.solution || 'Auto-scaling policy executed'}</span>
+              </div>
+            </div>
+
+            <button
+              className="btn-glass btn-blue"
+              style={{ marginTop: '24px', width: '100%' }}
+              onClick={() => setIsViewModalOpen(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

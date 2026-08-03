@@ -2,14 +2,12 @@ package com.service.assets.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.service.assets.dto.AlertResponseDTO;
 import com.service.assets.model.Alert;
@@ -64,5 +62,14 @@ public class AlertController {
         java.util.Map<String, Object> stats = new java.util.HashMap<>();
         stats.put("totalAlerts", alertRepository.count());
         return ResponseEntity.ok(stats);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Alert> getAlertById(@PathVariable("id") UUID alertId){
+        Alert alert=alertRepository.findById(alertId).orElse(null);
+        if(alert==null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(alert);
     }
 }

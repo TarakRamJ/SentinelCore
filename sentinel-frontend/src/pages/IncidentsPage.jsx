@@ -3,7 +3,7 @@ import API from '../services/api';
 import { AuthContext } from '../context/AuthContext';
 import { CustomLoader } from '../components/CustomLoader';
 import { StatusBadge } from '../components/StatusBadge';
-import { ShieldAlert, History, Clock, UserCheck, CheckCircle2, Lock, RefreshCw } from 'lucide-react';
+import { ShieldAlert, History, Clock, UserCheck, CheckCircle2, Lock, RefreshCw, Eye, X, AlertCircle } from 'lucide-react';
 
 export const IncidentsPage = () => {
   const { user } = useContext(AuthContext);
@@ -12,16 +12,21 @@ export const IncidentsPage = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [loading, setLoading] = useState(true);
   const [lastRefreshed, setLastRefreshed] = useState(new Date());
+  const [updateError, setUpdateError] = useState("");
 
-  // Wrap fetchIncidents in useCallback to safely use it in useEffect and polling intervals
+  // Modal States
+  const [selectedIncident, setSelectedIncident] = useState(null);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+
+  // Authorization Check
+  const canManageIncidents = user?.role === 'ADMIN' || user?.role === 'SECURITY_ANALYST';
+
   const fetchIncidents = useCallback(async (isBackground = false) => {
     if (!isBackground) setLoading(true);
     try {
-      // Fetch Active Critical Incidents (Excludes RESOLVED)
       const critRes = await API.get('/api/incidents/cirital');
       setCriticalIncidents(critRes.data);
 
-      // Fetch Full Incident History
       const allRes = await API.get('/api/incidents');
       setHistoryIncidents(allRes.data);
       setLastRefreshed(new Date());
@@ -32,31 +37,28 @@ export const IncidentsPage = () => {
     }
   }, []);
 
-  // Set up automatic 5-second polling interval
   useEffect(() => {
-    // Initial fetch
     fetchIncidents(false);
-
-    // Auto-refresh from Spring Boot backend every 5 seconds
     const interval = setInterval(() => {
-      fetchIncidents(true); // true = silent background refresh
+      fetchIncidents(true);
     }, 5000);
-
-    // Cleanup interval on component unmount
     return () => clearInterval(interval);
   }, [fetchIncidents]);
 
+  const handleViewIncident = (inc) => {
+    setSelectedIncident(inc);
+    setIsViewModalOpen(true);
+  };
+
   const handleStatusChange = async (id, newStatus) => {
-    if (user?.role !== 'ADMIN') {
-      alert('Access Denied: Only ADMIN users can alter incident state transitions.');
-      return;
-    }
+    setUpdateError("");
+    if (!canManageIncidents) return;
+    
     try {
       await API.put(`/api/incidents/${id}/status?status=${newStatus}`);
-      // Immediately pull fresh state from backend
       fetchIncidents(true);
     } catch (err) {
-      alert('Status update failed');
+      setUpdateError("Failed to update incident status.");
     }
   };
 
@@ -85,7 +87,26 @@ export const IncidentsPage = () => {
         </button>
       </div>
 
-      {/* Active Critical Incidents List */}
+      {/* UPDATE ERROR FEEDBACK */}
+      {updateError && (
+        <div
+          className="form-panel"
+          style={{
+            marginBottom: "20px",
+            padding: "12px 16px",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            borderLeft: "4px solid #f5222d",
+            backgroundColor: "rgba(245, 34, 45, 0.1)",
+          }}
+        >
+          <AlertCircle size={18} color="#f5222d" />
+          <span style={{ color: "#fff", fontSize: "0.9rem" }}>{updateError}</span>
+        </div>
+      )}
+
+      {/* ACTIVE CRITICAL INCIDENTS LIST */}
       {criticalIncidents.length === 0 ? (
         <div className="form-panel" style={{ textAlign: 'center', color: '#8c9ba5', padding: '30px' }}>
           No active unresolved critical incidents at this time.
@@ -100,11 +121,21 @@ export const IncidentsPage = () => {
                 </span>
                 <StatusBadge status={inc.severity} /> <StatusBadge status={inc.status} />
               </div>
-              {user?.role !== 'ADMIN' && (
-                <span style={{ fontSize: '0.8rem', color: '#8c9ba5', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <Lock size={12} /> Read-only mode
-                </span>
-              )}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <button
+                  className="btn-glass btn-blue"
+                  style={{ padding: '4px 10px', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}
+                  onClick={() => handleViewIncident(inc)}
+                  title="View Details"
+                >
+                  <Eye size={14} /> View
+                </button>
+                {!canManageIncidents && (
+                  <span style={{ fontSize: '0.8rem', color: '#8c9ba5', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Lock size={12} /> Read-only mode
+                  </span>
+                )}
+              </div>
             </div>
 
             <div style={{ marginTop: '15px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
@@ -145,36 +176,36 @@ export const IncidentsPage = () => {
               </div>
             </div>
 
-            {/* Admin Manual State Buttons */}
-            {user?.role === 'ADMIN' && (
-  <div style={{ display: 'flex', gap: '12px', marginTop: '15px' }}>
-    <button 
-      className="btn-glass btn-assign" 
-      onClick={() => handleStatusChange(inc.id, 'ASSIGNED')}
-    >
-      Assign
-    </button>
+            {/* STATE TRANSITION BUTTONS (AUTHORIZED USERS) */}
+            {canManageIncidents && (
+              <div style={{ display: 'flex', gap: '12px', marginTop: '15px' }}>
+                <button 
+                  className="btn-glass btn-assign" 
+                  onClick={() => handleStatusChange(inc.id, 'ASSIGNED')}
+                >
+                  Assign
+                </button>
 
-    <button 
-      className="btn-glass btn-investigate" 
-      onClick={() => handleStatusChange(inc.id, 'INVESTIGATION')}
-    >
-      Investigate
-    </button>
+                <button 
+                  className="btn-glass btn-investigate" 
+                  onClick={() => handleStatusChange(inc.id, 'INVESTIGATION')}
+                >
+                  Investigate
+                </button>
 
-    <button 
-      className="btn-glass btn-resolve" 
-      onClick={() => handleStatusChange(inc.id, 'RESOLVED')}
-    >
-      <CheckCircle2 size={16} style={{ marginRight: '6px' }} /> Resolve
-    </button>
-  </div>
-)}
+                <button 
+                  className="btn-glass btn-resolve" 
+                  onClick={() => handleStatusChange(inc.id, 'RESOLVED')}
+                >
+                  <CheckCircle2 size={16} style={{ marginRight: '6px' }} /> Resolve
+                </button>
+              </div>
+            )}
           </div>
         ))
       )}
 
-      {/* Incident History Drawer / Modal Box */}
+      {/* INCIDENT HISTORY DRAWER */}
       {showHistory && (
         <div className="table-panel" style={{ marginTop: '30px' }}>
           <h4 style={{ padding: '16px', color: 'var(--sentinelcore-text-muted)', margin: 0 }}>All Incident History (Including Resolved)</h4>
@@ -187,6 +218,7 @@ export const IncidentsPage = () => {
                 <th>Status</th>
                 <th>Impact Summary</th>
                 <th>Assigned Team</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -198,10 +230,95 @@ export const IncidentsPage = () => {
                   <td><StatusBadge status={h.status} /></td>
                   <td>{h.impactSummary}</td>
                   <td>{h.assignedTeam}</td>
+                  <td>
+                    <button
+                      className="btn-glass btn-blue"
+                      style={{ padding: '4px 10px', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}
+                      onClick={() => handleViewIncident(h)}
+                      title="View Details"
+                    >
+                      <Eye size={14} /> View
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* VIEW SINGLE INCIDENT MODAL */}
+      {isViewModalOpen && selectedIncident && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0,0,0,0.8)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000,
+          }}
+        >
+          <div className="form-panel" style={{ width: '480px', marginBottom: 0 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h3 style={{ margin: 0, color: '#fff' }}>Incident Details</h3>
+              <X size={20} color="#a0aec0" style={{ cursor: 'pointer' }} onClick={() => setIsViewModalOpen(false)} />
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '0.95rem' }}>
+              <div>
+                <span style={{ fontSize: '0.78rem', color: '#8c9ba5', display: 'block' }}>INCIDENT TICKET</span>
+                <span style={{ fontWeight: 600, color: '#fff' }}>#{selectedIncident.incidentTicket || 'N/A'}</span>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <div>
+                  <span style={{ fontSize: '0.78rem', color: '#8c9ba5', display: 'block' }}>TYPE</span>
+                  <span style={{ fontWeight: 600 }}>{selectedIncident.type}</span>
+                </div>
+                <div>
+                  <span style={{ fontSize: '0.78rem', color: '#8c9ba5', display: 'block' }}>SOURCE IP</span>
+                  <span style={{ fontFamily: 'monospace' }}>{selectedIncident.sourceIp}</span>
+                </div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <div>
+                  <span style={{ fontSize: '0.78rem', color: '#8c9ba5', display: 'block' }}>SEVERITY</span>
+                  <StatusBadge status={selectedIncident.severity} />
+                </div>
+                <div>
+                  <span style={{ fontSize: '0.78rem', color: '#8c9ba5', display: 'block' }}>STATUS</span>
+                  <StatusBadge status={selectedIncident.status} />
+                </div>
+              </div>
+              <div>
+                <span style={{ fontSize: '0.78rem', color: '#8c9ba5', display: 'block' }}>IMPACT SUMMARY</span>
+                <span>{selectedIncident.impactSummary}</span>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <div>
+                  <span style={{ fontSize: '0.78rem', color: '#8c9ba5', display: 'block' }}>ASSIGNED TEAM</span>
+                  <span>{selectedIncident.assignedTeam || 'Security Ops'}</span>
+                </div>
+                <div>
+                  <span style={{ fontSize: '0.78rem', color: '#8c9ba5', display: 'block' }}>SLA TARGET</span>
+                  <span>{selectedIncident.slaHours} Hours</span>
+                </div>
+              </div>
+            </div>
+
+            <button
+              className="btn-glass btn-blue"
+              style={{ marginTop: '24px', width: '100%' }}
+              onClick={() => setIsViewModalOpen(false)}
+            >
+              Close
+            </button>
+          </div>
         </div>
       )}
     </div>
