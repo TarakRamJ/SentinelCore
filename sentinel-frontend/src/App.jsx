@@ -14,6 +14,10 @@ import { IncidentsPage } from './pages/IncidentsPage';
 import { VulnerabilitiesPage } from './pages/VulnerabilitiesPage';
 import { MetricsPage } from './pages/MetricsPage';
 import RequestsPage from './pages/RequestsPage';
+import {AuditPage} from './pages/AuditPage';
+import {CompliancePage} from './pages/CompliancePage';
+import { ReportsPage } from './pages/ReportsPage';
+
 
 import './App.css';
 
@@ -56,6 +60,9 @@ const AppRoutes = () => {
           <Route path="/requests" element={<RequestsPage />} />
           <Route path="/users" element={<UsersPage />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/audit" element={<AuditPage />} />
+          <Route path="/compliance" element={<CompliancePage />} />
+          <Route path="/reports" element={<ReportsPage />} />
         </Routes>
       </div>
     </div>

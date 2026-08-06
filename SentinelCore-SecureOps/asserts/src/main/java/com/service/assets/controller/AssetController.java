@@ -21,7 +21,7 @@ public class AssetController {
         this.assetService = assetService;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Asset> registerAsset(@RequestBody Asset asset) {
         Asset created = assetService.createAsset(asset);
@@ -35,14 +35,14 @@ public class AssetController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Asset> updateAsset(@PathVariable UUID id, @RequestBody Asset assetDetails) {
         Asset updatedAsset = assetService.updateAsset(id, assetDetails);
         return ResponseEntity.ok(updatedAsset);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAsset(@PathVariable UUID id) {
         assetService.deleteAsset(id);

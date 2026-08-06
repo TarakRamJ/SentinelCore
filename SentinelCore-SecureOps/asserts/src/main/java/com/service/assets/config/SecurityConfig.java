@@ -46,6 +46,14 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/vulnerabilities/**").permitAll()
                         .requestMatchers("/api/users/**").hasAnyAuthority("ADMIN", "ROLE_ADMIN")
 
+                        // Milestone 4: Audit & Compliance
+                        .requestMatchers(HttpMethod.GET, "/api/audit/logs").hasAnyAuthority("ADMIN", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/audit/log").hasAnyAuthority("ADMIN", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/compliance/summary").hasAnyAuthority("ADMIN", "ROLE_ADMIN", "AUDITOR", "ROLE_AUDITOR")
+
+                        // Milestone 4: Reports & PDF Export
+                        .requestMatchers("/api/reports/**").hasAnyAuthority("ADMIN", "ROLE_ADMIN", "AUDITOR", "ROLE_AUDITOR")
+
                         // Admin Requests Matchers
                         .requestMatchers("/api/requests/my-requests").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/requests").authenticated()
@@ -70,7 +78,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of("http://localhost:5173"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
-        configuration.setExposedHeaders(List.of("Authorization"));
+        configuration.setExposedHeaders(List.of("Authorization", "Content-Disposition"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
