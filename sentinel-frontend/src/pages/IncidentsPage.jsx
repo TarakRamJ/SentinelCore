@@ -39,7 +39,7 @@ export const IncidentsPage = () => {
     fetchIncidents(false);
     const interval = setInterval(() => {
       fetchIncidents(true);
-    }, 5000);
+    }, 8000);
     return () => clearInterval(interval);
   }, [fetchIncidents]);
 

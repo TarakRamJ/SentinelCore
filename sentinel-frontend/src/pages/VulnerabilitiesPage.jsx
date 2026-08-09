@@ -33,7 +33,7 @@ export const VulnerabilitiesPage = () => {
     patchStatus: "PENDING",
     affectedServersCount: 10,
     patchedServersCount: 0,
-    scannerSource: "Trivy Scanner",
+    scannerSource: "  Scanner",
   });
   const [formErrors, setFormErrors] = useState({});
 
@@ -87,7 +87,7 @@ export const VulnerabilitiesPage = () => {
         patchStatus: "PENDING",
         affectedServersCount: 10,
         patchedServersCount: 0,
-        scannerSource: "Trivy Scanner",
+        scannerSource: "  Scanner",
       });
       setFormErrors({});
       setNotice({ type: "success", message: "Vulnerability registered successfully." });

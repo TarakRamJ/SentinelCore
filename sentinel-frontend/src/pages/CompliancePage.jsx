@@ -75,7 +75,7 @@ export const CompliancePage = () => {
         </div>
         <div className="stat-card">
           <div className="stat-title">DevSecOps Pipeline</div>
-          <div className="stat-value" style={{ color: 'var(--sentinelcore-blue)' , fontSize: '1.7rem' }}>
+          <div className="stat-value" style={{ color: 'var(--sentinelcore-blue)' , fontSize: '1.5rem' }}>
             {summary?.owaspStatus || 'PASSED'}
           </div>
         </div>

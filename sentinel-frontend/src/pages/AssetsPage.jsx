@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import API from "../services/api";
 import { AuthContext } from "../context/AuthContext";
 import { CustomLoader } from "../components/CustomLoader";
@@ -37,9 +37,12 @@ export const AssetsPage = () => {
   });
   const [editErrors, setEditErrors] = useState({});
 
-  const fetchAssets = async () => {
+  const fetchAssets = useCallback(async () => {
     try {
-      const res = await API.get("/api/v1/assets");
+      const endpoint = searchPrefix.trim()
+        ? `/api/v1/assets/find?prefix=${encodeURIComponent(searchPrefix.trim())}`
+        : "/api/v1/assets";
+      const res = await API.get(endpoint);
       setAssets(res.data);
     } catch (err) {
       console.error("Assets fetch error:", err);
@@ -47,11 +50,15 @@ export const AssetsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchPrefix]);
 
   useEffect(() => {
     fetchAssets();
-  }, []);
+    const interval = setInterval(() => {
+      fetchAssets();
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [fetchAssets]);
 
   const validateForm = (data) => {
     const errs = {};

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../services/api";
+import { AuthContext } from "../context/AuthContext";
 import { ActivityHeatmap } from "./ActivityHeatmap";
 import { DashboardTelemetrySection } from "../components/DashboardTelemetrySection";
 import {
@@ -125,13 +126,13 @@ const KPI_DEFS = [
 
 const QUICK_ACTIONS = [
   { label: "Add Asset", act: "ADD_ASSET", icon: AddIcon, color: "#3B82F6" },
-  { label: "Create Incident", act: "CREATE_INCIDENT", icon: WarningIcon, color: "#F59E0B" },
-  { label: "Run Trivy Scan", act: "RUN_TRIVY", icon: BugIcon, color: "#EF4444" },
+  { label: "Check Incidents", act: "CREATE_INCIDENT", icon: WarningIcon, color: "#F59E0B" },
+  { label: "Run Scan", act: "RUN_TRIVY", icon: BugIcon, color: "#EF4444" },
   { label: "Generate Report", act: "GENERATE_REPORT", icon: ReportIcon, color: "#8B93A3" },
-  { label: "Check Compliance", act: "CHECK_COMPLIANCE", icon: ComplianceIcon, color: "#10B981" },
+  { label: "Check Compliance", act: "CHECK_COMPLIANCE", icon: ComplianceIcon, color: "#10B981", adminOnly: true },
   { label: "View Alerts", act: "VIEW_ALERTS", icon: BellIcon, color: "#F59E0B" },
   { label: "View Vulnerabilities", act: "VIEW_VULNERABILITIES", icon: ShieldIcon, color: "#EF4444" },
-  { label: "Audit Trail", act: "VIEW_AUDIT_TRAIL", icon: AuditIcon, color: "#3B82F6" },
+  { label: "Audit Trail", act: "VIEW_AUDIT_TRAIL", icon: AuditIcon, color: "#3B82F6", adminOnly: true },
 ];
 
 // Custom Tooltip for Asset Health Pie Chart
@@ -162,6 +163,8 @@ const PieTooltip = ({ active, payload }) => {
 
 export const DashboardPage = () => {
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
+  const isAdmin = user?.role === "ADMIN";
   const [data, setData] = useState(null);
   const [charts, setCharts] = useState([]);
   const [auditLogs, setAuditLogs] = useState([]);
@@ -171,8 +174,8 @@ export const DashboardPage = () => {
   const [toast, setToast] = useState({ open: false, message: "", severity: "info" });
   const [lastRefreshed, setLastRefreshed] = useState(new Date());
 
-  const fetchSocData = async () => {
-    setLoading(true);
+  const fetchSocData = async (isBackground = false) => {
+    if (!isBackground) setLoading(true);
     try {
       const [socRes, chartRes] = await Promise.all([
         API.get("/api/dashboard/soc-overview"),
@@ -198,10 +201,6 @@ export const DashboardPage = () => {
     }
   };
 
-  useEffect(() => {
-    fetchSocData();
-  }, []);
-
   const handleQuickAction = async (actionType) => {
     setActionLoading(true);
     try {
@@ -214,16 +213,14 @@ export const DashboardPage = () => {
           break;
         case "RUN_TRIVY":
           await API.post("/api/vulnerabilities/scan/trivy");
-          setToast({ open: true, message: "Trivy vulnerability scan started.", severity: "success" });
+          setToast({ open: true, message: "Vulnerability scan started.", severity: "success" });
           fetchSocData();
           break;
         case "GENERATE_REPORT":
           navigate("/reports");
           break;
         case "CHECK_COMPLIANCE":
-          await API.post("/api/compliance/scan");
-          setToast({ open: true, message: "Compliance evaluation complete.", severity: "success" });
-          fetchSocData();
+          navigate("/compliance");
           break;
         case "VIEW_ALERTS":
           navigate("/alerts");
@@ -232,7 +229,7 @@ export const DashboardPage = () => {
           navigate("/vulnerabilities");
           break;
         case "VIEW_AUDIT_TRAIL":
-          navigate("/audit-trail");
+          navigate("/audit");
           break;
         default:
           break;
@@ -261,6 +258,8 @@ export const DashboardPage = () => {
     }
   };
 
+  const visibleQuickActions = QUICK_ACTIONS.filter((item) => !item.adminOnly || isAdmin);
+
   const resourceUsage = [
     { label: "CPU Usage", val: Math.round(data?.resourceSummary?.cpuUsage ?? 23), icon: <CpuIcon fontSize="small" /> },
     { label: "Memory Usage", val: Math.round(data?.resourceSummary?.memoryUsage ?? 47), icon: <AssetIcon fontSize="small" /> },
@@ -270,20 +269,29 @@ export const DashboardPage = () => {
 
   const securityScore = data?.securityScore ?? 85;
 
-  useEffect(() => {
-    fetchAuditLogs();
-  }, []);
-
-  const fetchAuditLogs = async () => {
+  const fetchAuditLogs = async (isBackground = false) => {
+    if (!isBackground) setLoadingLogs(true);
     try {
       const res = await API.get("/api/dashboard/auditLogs-summary");
       setAuditLogs(res.data);
     } catch (err) {
       console.error("Failed to fetch audit logs summary:", err);
     } finally {
-      setLoadingLogs(false);
+      if (!isBackground) setLoadingLogs(false);
     }
   };
+
+  useEffect(() => {
+    fetchSocData(false);
+    fetchAuditLogs(false);
+
+    const interval = setInterval(() => {
+      fetchSocData(true);
+      fetchAuditLogs(true);
+    }, 15000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const formatLogTime = (isoString) => {
     if (!isoString) return "--:--";
@@ -639,7 +647,7 @@ export const DashboardPage = () => {
                 Quick Operations Hub
               </Typography>
               <Box sx={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 1 }}>
-                {QUICK_ACTIONS.map((item) => {
+                {visibleQuickActions.map((item) => {
                   const Icon = item.icon;
                   return (
                     <Button

@@ -5,12 +5,25 @@ import { CustomLoader } from '../components/CustomLoader';
 export const MetricsPage = () => {
   const [metrics, setMetrics] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [lastRefreshed, setLastRefreshed] = useState(null);
+
+  const fetchMetrics = async (isBackground = false) => {
+    if (!isBackground) setLoading(true);
+    try {
+      const res = await API.get('/api/metrics');
+      setMetrics(res.data);
+      setLastRefreshed(new Date());
+    } catch (err) {
+      console.error('Metrics error', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    API.get('/api/metrics')
-      .then(res => setMetrics(res.data))
-      .catch(err => console.error("Metrics error", err))
-      .finally(() => setLoading(false));
+    fetchMetrics(false);
+    const interval = setInterval(() => fetchMetrics(true), 15000);
+    return () => clearInterval(interval);
   }, []);
 
   if (loading) return <CustomLoader message="Fetching Performance Telemetry..." />;

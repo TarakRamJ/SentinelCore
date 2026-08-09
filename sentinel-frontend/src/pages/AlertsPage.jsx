@@ -12,11 +12,22 @@ export const AlertsPage = () => {
   const [selectedAlert, setSelectedAlert] = useState(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
 
+  const fetchAlerts = async (isBackground = false) => {
+    if (!isBackground) setLoading(true);
+    try {
+      const res = await API.get('/api/dashboard/recent-alerts');
+      setAlerts(res.data);
+    } catch (err) {
+      console.error('Alerts fetch error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    API.get('/api/dashboard/recent-alerts')
-      .then((res) => setAlerts(res.data))
-      .catch((err) => console.error('Alerts fetch error:', err))
-      .finally(() => setLoading(false));
+    fetchAlerts(false);
+    const interval = setInterval(() => fetchAlerts(true), 10000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleViewAlert = (alert) => {
