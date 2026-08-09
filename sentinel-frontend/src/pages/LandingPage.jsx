@@ -78,7 +78,7 @@ export const LandingPage = ({ onOpenAuth }) => {
         justifyContent: 'space-between',
         padding: '0 32px'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.4rem', fontWeight: 800, color: '#52c41a' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.9rem', fontWeight: 800, color: '#52c41a' }}>
           <Shield size={28} />
           <span style={{ color: '#fff', letterSpacing: '-0.3px' }}>Sentinel<span style={{ color: '#52c41a' }}>Core</span></span>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.85rem', color: '#a3b3c2', background: '#10141d', padding: '6px 14px', borderRadius: '20px', border: '1px solid #1f2430', marginLeft: '12px' }}>
@@ -89,17 +89,8 @@ export const LandingPage = ({ onOpenAuth }) => {
         
         <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
           <button 
-            style={{ 
-              background: '#52c41a', 
-              color: '#080a0f', 
-              border: 'none', 
-              padding: '9px 22px', 
-              borderRadius: '6px', 
-              cursor: 'pointer', 
-              fontWeight: 700,
-              fontSize: '0.9rem',
-              transition: 'transform 0.15s ease'
-            }} 
+          className="btn-glass btn-green"
+            style={{ flex: 1, width: '100%' }}
             onClick={() => onOpenAuth && onOpenAuth(true)}
           >
             Sign In
@@ -201,10 +192,10 @@ export const LandingPage = ({ onOpenAuth }) => {
               <span style={{ background: 'rgba(82, 196, 26, 0.1)', color: '#52c41a', border: '1px solid rgba(82, 196, 26, 0.25)', padding: '6px 16px', borderRadius: '20px', fontSize: '0.875rem', fontWeight: 600 }}>
                 Enterprise SecOps Command Center
               </span>
-              <h1 style={{ fontSize: '3.2rem', fontWeight: 800, marginTop: '20px', marginBottom: '20px', lineHeight: 1.15, letterSpacing: '-0.5px' }}>
+              <h1 style={{ fontSize: '2.7rem', fontWeight: 800, marginTop: '20px', marginBottom: '20px', lineHeight: 1.15, letterSpacing: '-0.5px' }}>
                 Unified Infrastructure Telemetry &amp; Threat Detection
               </h1>
-              <p style={{ fontSize: '1.25rem', color: '#9daab6', maxWidth: '800px', lineHeight: 1.6 }}>
+              <p style={{ fontsize: '0.9rem', color: '#9daab6', maxWidth: '800px', lineHeight: 1.6 }}>
                 Real-time incident response, automated vulnerability assessment, and zero-trust asset monitoring engineered for security operations teams.
               </p>
             </div>
@@ -224,7 +215,7 @@ export const LandingPage = ({ onOpenAuth }) => {
                     <span style={{ fontSize: '0.95rem', color: '#9daab6', fontWeight: 500 }}>{card.label}</span>
                     {card.icon}
                   </div>
-                  <div style={{ fontSize: '2.4rem', fontWeight: 800, color: '#fff', letterSpacing: '-0.5px' }}>{card.val}</div>
+                  <div style={{ fontSize: '1.0rem', fontWeight: 800, color: '#fff', letterSpacing: '-0.5px' }}>{card.val}</div>
                   <div style={{ fontSize: '0.85rem', color: '#6e7681', marginTop: '8px' }}>{card.sub}</div>
                 </div>
               ))}
@@ -246,8 +237,8 @@ export const LandingPage = ({ onOpenAuth }) => {
               ].map((cap, idx) => (
                 <div key={idx} style={{ background: '#0c0f17', border: '1px solid #1f2430', padding: '28px', borderRadius: '10px' }}>
                   <div style={{ marginBottom: '18px' }}>{cap.icon}</div>
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '10px' }}>{cap.title}</h3>
-                  <p style={{ fontSize: '0.98rem', color: '#9daab6', lineHeight: 1.6 }}>{cap.desc}</p>
+                  <h3 style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '10px' }}>{cap.title}</h3>
+                  <p style={{ fontSize: '0.7rem', color: '#9daab6', lineHeight: 1.6 }}>{cap.desc}</p>
                 </div>
               ))}
             </div>
@@ -344,7 +335,7 @@ export const LandingPage = ({ onOpenAuth }) => {
             
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '28px' }}>
               <div style={{ background: '#0c0f17', border: '1px solid #1f2430', padding: '28px', borderRadius: '10px' }}>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '20px' }}>Event-Driven Technology Stack</h3>
+                <h3 style={{ fontsize: '0.9rem', fontWeight: 700, marginBottom: '20px' }}>Event-Driven Technology Stack</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   {["React 20 Frontend", "Spring Boot Microservices", "Apache Kafka Message Bus", "PostgreSQL Storage", "Redis In-Memory Cache", "AWS & Azure Deployment"].map((item, i) => (
                     <div key={i} style={{ background: '#10141d', border: '1px solid #1f2430', padding: '12px 18px', borderRadius: '8px', fontSize: '0.95rem', color: '#e6edf3', fontWeight: 500 }}>
@@ -355,7 +346,7 @@ export const LandingPage = ({ onOpenAuth }) => {
               </div>
 
               <div style={{ background: '#0c0f17', border: '1px solid #1f2430', padding: '28px', borderRadius: '10px' }}>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '20px' }}>Supported Infrastructure</h3>
+                <h3 style={{ fontsize: '0.9rem', fontWeight: 700, marginBottom: '20px' }}>Supported Infrastructure</h3>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '28px' }}>
                   {["AWS EC2", "AWS EKS", "Azure AKS", "Docker", "Kubernetes", "PostgreSQL", "Redis", "Kafka"].map((tech, i) => (
                     <span key={i} style={{ background: '#10141d', border: '1px solid #1f2430', padding: '8px 16px', borderRadius: '6px', fontSize: '0.9rem', color: '#9daab6' }}>
@@ -364,7 +355,7 @@ export const LandingPage = ({ onOpenAuth }) => {
                   ))}
                 </div>
 
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '18px' }}>Compliance Standards</h3>
+                <h3 style={{ fontsize: '0.9rem', fontWeight: 700, marginBottom: '18px' }}>Compliance Standards</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   {["PCI DSS", "SOC 2 Type II", "ISO 27001", "RBAC Enforcement", "Immutable Logs", "TLS Encryption"].map((badge, i) => (
                     <div key={i} style={{ fontSize: '0.95rem', color: '#52c41a', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 500 }}>
@@ -399,23 +390,15 @@ export const LandingPage = ({ onOpenAuth }) => {
 
           {/* CTA Banner */}
           <div style={{ background: 'linear-gradient(180deg, #0c0f17 0%, #10141d 100%)', border: '1px solid #1f2430', borderRadius: '14px', padding: '56px', textAlign: 'center' }}>
-            <h2 style={{ fontSize: '2.4rem', fontWeight: 800, marginBottom: '16px' }}>Ready to Protect Your Infrastructure?</h2>
-            <p style={{ color: '#9daab6', fontSize: '1.1rem', marginBottom: '28px', maxWidth: '580px', margin: '0 auto 28px' }}>
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '16px' }}>Ready to Protect Your Infrastructure?</h2>
+            <p style={{ color: '#9daab6', fontSize: '0.8rem', marginBottom: '28px', maxWidth: '580px', margin: '0 auto 28px' }}>
               Unify server health, security incident response, and compliance checks under a single operational command center.
             </p>
             <button 
-              style={{ 
-                background: '#52c41a', 
-                color: '#080a0f', 
-                border: 'none', 
-                padding: '14px 38px', 
-                borderRadius: '8px', 
-                cursor: 'pointer', 
-                fontWeight: 700,
-                fontSize: '1.05rem'
-              }}
-              onClick={() => onOpenAuth && onOpenAuth(true)}
-            >
+          className="btn-glass btn-purple"
+            style={{ flex: 1, background:'transparent', width: '100%' }}
+            onClick={() => onOpenAuth && onOpenAuth(true)}
+          >
               Launch Dashboard
             </button>
           </div>
@@ -435,6 +418,6 @@ export const LandingPage = ({ onOpenAuth }) => {
 const SectionTitle = ({ title, subtitle }) => (
   <div style={{ marginBottom: '28px' }}>
     <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '8px', letterSpacing: '-0.3px' }}>{title}</h2>
-    <p style={{ color: '#9daab6', fontSize: '1.05rem' }}>{subtitle}</p>
+    <p style={{ color: '#9daab6', fontSize: '0.8rem' }}>{subtitle}</p>
   </div>
 );

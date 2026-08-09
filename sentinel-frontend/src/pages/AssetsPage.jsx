@@ -497,10 +497,10 @@ export const AssetsPage = () => {
                 <StatusBadge status={selectedAsset.status} />
               </div>
             </div>
-
             <button
               className="btn-glass btn-blue"
-              style={{ marginTop: "24px", width: "100%" }}
+              style={{ flex: 1,
+                  background: "transparent",marginTop: "24px", width: "100%" }}
               onClick={() => setIsViewModalOpen(false)}
             >
               Close
@@ -637,14 +637,13 @@ export const AssetsPage = () => {
                   <Check size={16} /> Save Changes
                 </button>
                 <button
-                  type="button"
-                  className="btn-glass"
-                  style={{
-                    background: "transparent",
-                    borderColor: "var(--sentinelcore-border)",
-                  }}
-                  onClick={() => setIsEditModalOpen(false)}
-                >
+                className="btn-glass btn-blue"
+                style={{
+                  flex: 1,
+                  background: "transparent",
+                }}
+                onClick={() => setIsDeleteModalOpen(false)}
+              >
                   Cancel
                 </button>
               </div>
@@ -717,17 +716,16 @@ export const AssetsPage = () => {
             <div style={{ display: "flex", gap: "12px" }}>
               <button
                 className="btn-glass btn-red"
-                style={{ flex: 1 }}
+                style={{ flex: 1, }}
                 onClick={handleConfirmDelete}
               >
                 Delete Asset
               </button>
               <button
-                className="btn-glass"
+                className="btn-glass btn-blue"
                 style={{
                   flex: 1,
                   background: "transparent",
-                  borderColor: "var(--sentinelcore-border)",
                 }}
                 onClick={() => setIsDeleteModalOpen(false)}
               >

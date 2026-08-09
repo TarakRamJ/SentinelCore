@@ -14,10 +14,9 @@ import { IncidentsPage } from './pages/IncidentsPage';
 import { VulnerabilitiesPage } from './pages/VulnerabilitiesPage';
 import { MetricsPage } from './pages/MetricsPage';
 import RequestsPage from './pages/RequestsPage';
-import {AuditPage} from './pages/AuditPage';
-import {CompliancePage} from './pages/CompliancePage';
+import { AuditPage } from './pages/AuditPage';
+import { CompliancePage } from './pages/CompliancePage';
 import { ReportsPage } from './pages/ReportsPage';
-
 
 import './App.css';
 
@@ -25,6 +24,7 @@ const AppRoutes = () => {
   const { user } = useContext(AuthContext);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [initialLoginMode, setInitialLoginMode] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   if (!user) {
     if (showAuthModal) {
@@ -46,9 +46,9 @@ const AppRoutes = () => {
   }
 
   return (
-    <div className="app-shell">
-      <Sidebar />
-      <div className="main-content-area">
+    <div className="app-shell" style={{ display: 'flex' }}>
+      <Sidebar isOpen={isSidebarOpen} onToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
+      <div className="main-content-area" style={{ flex: 1, minWidth: 0, transition: 'all 0.3s ease' }}>
         <Navbar />
         <Routes>
           <Route path="/dashboard" element={<DashboardPage />} />
@@ -59,10 +59,10 @@ const AppRoutes = () => {
           <Route path="/metrics" element={<MetricsPage />} />
           <Route path="/requests" element={<RequestsPage />} />
           <Route path="/users" element={<UsersPage />} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
           <Route path="/audit" element={<AuditPage />} />
           <Route path="/compliance" element={<CompliancePage />} />
           <Route path="/reports" element={<ReportsPage />} />
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </div>
     </div>

@@ -133,7 +133,7 @@ export const AlertsPage = () => {
 
             <button
               className="btn-glass btn-blue"
-              style={{ marginTop: '24px', width: '100%' }}
+              style={{flex:1, background: "transparent", marginTop: '24px', width: '100%' }}
               onClick={() => setIsViewModalOpen(false)}
             >
               Close

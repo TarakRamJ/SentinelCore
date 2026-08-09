@@ -1,9 +1,11 @@
 package com.service.assets.controller;
 
+import com.service.assets.dto.ActivityHeatmapDTO;
 import com.service.assets.dto.ComplianceSummaryDTO;
 import com.service.assets.model.AuditLog;
 import com.service.assets.service.AuditComplianceService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,5 +41,13 @@ public class AuditComplianceController {
             @RequestParam String status,
             @RequestParam(defaultValue = "127.0.0.1") String ip) {
         return ResponseEntity.ok(auditComplianceService.logAction(email, action, resource, targetId, targetName, status, ip));
+    }
+
+    @GetMapping("/dashboard/activity-heatmap")
+    public ResponseEntity<ActivityHeatmapDTO> getActivityHeatmap(
+            Authentication authentication,
+            @RequestParam(defaultValue = "365") int days) {
+        String userEmail = authentication.getName();
+        return ResponseEntity.ok(auditComplianceService.getUserActivityHeatmap(userEmail, days));
     }
 }

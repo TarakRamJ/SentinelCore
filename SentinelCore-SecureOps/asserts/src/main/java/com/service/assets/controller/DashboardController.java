@@ -49,4 +49,19 @@ public class DashboardController {
     public ResponseEntity<List<MonitoringChartDTO>> getChartData(@RequestParam(required = false) UUID assetId) {
         return ResponseEntity.ok(dashboardService.getMonitoringHistory(assetId));
     }
+
+    @GetMapping("/soc-overview")
+    public ResponseEntity<SocDashboardDTO> getSocOverview() {
+        return ResponseEntity.ok(dashboardService.getSocDashboardData());
+    }
+
+    @GetMapping("/metrics/average")
+    public ResponseEntity<ResourceSummaryDTO> getAverageResourceUsage() {
+        return ResponseEntity.ok(dashboardService.getResourceSummary());
+    }
+
+    @GetMapping("/auditLogs-summary")
+    public ResponseEntity<List<AuditSummaryDTO>> getAuditLogsSummary(){
+        return ResponseEntity.ok(dashboardService.getAuditLogsSummary());
+    }
 }

@@ -52,7 +52,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/compliance/summary").hasAnyAuthority("ADMIN", "ROLE_ADMIN", "AUDITOR", "ROLE_AUDITOR")
 
                         // Milestone 4: Reports & PDF Export
-                        .requestMatchers("/api/reports/**").hasAnyAuthority("ADMIN", "ROLE_ADMIN", "AUDITOR", "ROLE_AUDITOR")
+                        .requestMatchers("/api/reports/**").authenticated()
 
                         // Admin Requests Matchers
                         .requestMatchers("/api/requests/my-requests").authenticated()

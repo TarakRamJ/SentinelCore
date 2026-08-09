@@ -3,10 +3,12 @@ import API from '../services/api';
 import { AuthContext } from '../context/AuthContext';
 import { CustomLoader } from '../components/CustomLoader';
 import { StatusBadge } from '../components/StatusBadge';
-import { FileText, Download, Plus, Eye, RefreshCw, X, Lock } from 'lucide-react';
+import { FileText, Download, Plus, Eye, RefreshCw, X } from 'lucide-react';
 
 export const ReportsPage = () => {
   const { user } = useContext(AuthContext);
+  const isAdmin = user?.role === 'ADMIN' || user?.role === 'ROLE_ADMIN';
+
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [reportType, setReportType] = useState('SECURITY_REPORT');
@@ -69,16 +71,6 @@ export const ReportsPage = () => {
 
   if (loading) return <CustomLoader message="Loading Security Operations Reports..." />;
 
-  if (user?.role !== 'ADMIN' && user?.role !== 'AUDITOR') {
-    return (
-      <div className="page-container" style={{ textAlign: 'center', padding: '60px 20px' }}>
-        <Lock size={48} color="#f5222d" style={{ margin: '0 auto 16px' }} />
-        <h2 style={{ color: '#fff' }}>Access Restricted</h2>
-        <p style={{ color: '#8c9ba5' }}>Only Administrators and Security Auditors have permission to access Reports.</p>
-      </div>
-    );
-  }
-
   return (
     <div className="page-container">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
@@ -86,7 +78,7 @@ export const ReportsPage = () => {
           <FileText size={24} color="var(--sentinelcore-blue)" />
           <h2 style={{ color: '#fff', margin: 0 }}>Security Reports & PDF Export</h2>
         </div>
-        <button className="btn-primary" onClick={fetchReports} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <button className="btn-glass btn-purple" onClick={fetchReports} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <RefreshCw size={15} /> Refresh Catalog
         </button>
       </div>
@@ -104,9 +96,18 @@ export const ReportsPage = () => {
           <div className="form-field" style={{ flex: 1 }}>
             <label>Report Type</label>
             <select className="form-input" value={reportType} onChange={(e) => setReportType(e.target.value)}>
+              {/* Type 1: Visible to everyone */}
               <option value="SECURITY_REPORT">Security Operations Executive Report</option>
-              <option value="AUDIT_REPORT">System Audit Trail & Event Logs Report</option>
-              <option value="COMPLIANCE_REPORT">Regulatory Compliance Report (PCI DSS / SOC 2)</option>
+              
+              {/* Type 2 & 3: Visible to ADMIN only */}
+              {isAdmin && (
+                <>
+                  <option value="AUDIT_REPORT">System Audit Trail & Event Logs Report</option>
+                  <option value="COMPLIANCE_REPORT">Regulatory Compliance Report (PCI DSS / SOC 2)</option>
+                </>
+              )}
+
+              {/* Type 4: Visible to everyone */}
               <option value="RISK_REPORT">Vulnerability & Patch Risk Assessment</option>
             </select>
           </div>
@@ -138,7 +139,7 @@ export const ReportsPage = () => {
                 <td style={{ fontWeight: 600, color: '#fff' }}>{rep.title}</td>
                 <td style={{ fontSize: '0.85rem' }}>{rep.reportType}</td>
                 <td style={{ fontFamily: 'monospace', color: '#1890ff' }}>{rep.generatedBy}</td>
-                <td><StatusBadge status={rep.status === 'READY' ? 'HEALTHY' : 'WARNING'} /></td>
+                <td><StatusBadge status={rep.status === 'READY' ? 'READY' : 'PENDING'} /></td>
                 <td style={{ fontSize: '0.8rem', color: '#8c9ba5' }}>
                   {rep.createdDate ? new Date(rep.createdDate).toLocaleString() : 'Just now'}
                 </td>
@@ -209,7 +210,7 @@ export const ReportsPage = () => {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                 <div>
                   <span style={{ fontSize: '0.78rem', color: '#8c9ba5', display: 'block', marginBottom: '4px' }}>STATUS</span>
-                  <StatusBadge status={selectedReport.status === 'READY' ? 'HEALTHY' : 'WARNING'} />
+                  <StatusBadge status={selectedReport.status === 'READY' ? 'READY' : 'PENDING'} />
                 </div>
                 <div>
                   <span style={{ fontSize: '0.78rem', color: '#8c9ba5', display: 'block' }}>DATE GENERATED</span>
@@ -227,8 +228,8 @@ export const ReportsPage = () => {
                 <Download size={16} /> Download PDF
               </button>
               <button
-                className="btn-glass"
-                style={{ flex: 1, background: 'transparent', borderColor: 'var(--sentinelcore-border)' }}
+                className="btn-glass btn-blue"
+                style={{ flex: 1, background: 'transparent' }}
                 onClick={() => setIsViewModalOpen(false)}
               >
                 Close

@@ -1,0 +1,54 @@
+package com.service.assets.dto;
+
+import com.service.assets.model.AuditLog;
+import com.service.assets.model.ComplianceCheck;
+import com.service.assets.model.Incident;
+import com.service.assets.model.Vulnerability;
+
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Map;
+
+public record SocDashboardDTO(
+        // KPI Data
+        long totalAssets,
+        long healthyAssets,
+        long criticalAssets,
+        long activeAlerts,
+        long activeIncidents,
+        long criticalVulnerabilities,
+        double overallRiskScore,
+        double compliancePercentage,
+        long auditLogsToday,
+        OffsetDateTime lastTrivyScan,
+        OffsetDateTime lastSonarScan,
+
+        // Resource Usage
+        ResourceSummaryDTO resourceSummary,
+
+        // Security Operations
+        Map<String, Long> incidentsBySeverity,
+        long openIncidents,
+        long resolvedIncidents,
+        Incident topCriticalIncident,
+
+        // Vulnerabilities
+        Map<String, Long> vulnerabilitiesBySeverity,
+        double patchProgressPercentage,
+        List<Vulnerability> topCriticalCVEs,
+
+        // Compliance
+        List<ComplianceCheck> complianceSummary,
+
+        // Timeline & Activity
+        List<AuditLog> recentAuditLogs,
+        List<Incident> recentIncidents,
+        List<AlertResponseDTO> recentAlerts,
+
+        // Metrics & Score
+        String threatLevel, // LOW, MEDIUM, HIGH, CRITICAL
+        int securityScore, // 0-100
+
+        // Footer Infrastructure
+        Map<String, String> systemServicesStatus
+) {}

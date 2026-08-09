@@ -14,8 +14,8 @@ public class AuditLog {
     private String userEmail;
     private String action;
     private String resource;
-    private String affectedEntityId;   // e.g. "550e8400-e29b-41d4-a716-446655440000"
-    private String affectedEntityName; // e.g. "DB-Server-01" or "CVE-2024-1234"
+    private String affectedEntityId;
+    private String affectedEntityName;
     private String status;
     private String ipAddress;
     private LocalDateTime timestamp;
