@@ -122,7 +122,9 @@ export const AuthPage = () => {
         // Handle 2FA Challenge Trigger
         if (response.data?.mfaRequired) {
           setIsMfaRequired(true);
-          setSuccessMessage("Security Challenge: Enter the 2FA code from your authenticator app.");
+          setSuccessMessage(
+            "Security Challenge: Enter the 2FA code from your authenticator app.",
+          );
           return;
         }
 
@@ -132,10 +134,15 @@ export const AuthPage = () => {
 
         setFormData({ username: "", email: "", password: "" });
         setIsLoginMode(true);
-        setSuccessMessage("Account created successfully. Please sign in with your credentials.");
+        setSuccessMessage(
+          "Account created successfully. Please sign in with your credentials.",
+        );
       }
     } catch (err) {
-      setApiError(err.response?.data?.message || "Authentication service failed. Please check credentials.");
+      setApiError(
+        err.response?.data?.message ||
+          "Authentication service failed. Please check credentials.",
+      );
     } finally {
       setLoading(false);
     }
@@ -152,7 +159,8 @@ export const AuthPage = () => {
           alignItems: "center",
           justifyContent: "center",
           backgroundColor: "background.default",
-          backgroundImage: "radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.05) 0%, transparent 70%)",
+          backgroundImage:
+            "radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.05) 0%, transparent 70%)",
           p: 2,
         }}
       >
@@ -169,37 +177,66 @@ export const AuthPage = () => {
         >
           <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
             {/* BRANDING HEADER */}
-            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mb: 3 }}>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1 }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                mb: 3,
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.75,
+                  mb: 0.5,
+                }}
+              >
                 <Box
                   sx={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 2,
-                    backgroundColor: "rgba(16, 185, 129, 0.12)",
-                    border: "1px solid rgba(16, 185, 129, 0.3)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    color: "primary.main",
+                    color: "#52c41a",
                   }}
                 >
                   <Shield size={24} />
                 </Box>
-                <Typography variant="h5" sx={{ fontWeight: 800, color: "#fff", letterSpacing: "-0.5px" }}>
-                  Sentinel<span style={{ color: "#10B981" }}>Core</span>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontWeight: 800,
+                    color: "#fff",
+                    letterSpacing: "-0.5px",
+                  }}
+                >
+                  Sentinel<span style={{ color: "#52c41a" }}>Core</span>
                 </Typography>
               </Box>
-              <Typography variant="caption" sx={{ color: "text.secondary", fontSize: "0.78rem" }}>
+              <Typography
+                variant="caption"
+                sx={{ color: "text.secondary", fontSize: "0.78rem" }}
+              >
                 Enterprise Security Operations Platform
               </Typography>
             </Box>
 
             <Typography
               variant="h6"
-              sx={{ textAlign: "center", fontWeight: 700, mb: 2.5, color: "#F5F7FA", fontSize: "1.05rem" }}
+              sx={{
+                textAlign: "center",
+                fontWeight: 700,
+                mb: 2.5,
+                color: "#F5F7FA",
+                fontSize: "1.05rem",
+              }}
             >
-              {isMfaRequired ? "Two-Factor Verification" : isLoginMode ? "Sign In to Console" : "Register Enterprise Account"}
+              {isMfaRequired
+                ? "Two-Factor Verification"
+                : isLoginMode
+                  ? "Sign In to Console"
+                  : "Register Enterprise Account"}
             </Typography>
 
             {/* SUCCESS BANNER */}
@@ -214,12 +251,19 @@ export const AuthPage = () => {
                   borderRadius: 1.5,
                   backgroundColor: "rgba(16, 185, 129, 0.12)",
                   border: "1px solid rgba(16, 185, 129, 0.3)",
-                  color: "#34d399",
+                  color: "#52c41a",
                   fontSize: "0.825rem",
                 }}
               >
                 <CheckCircle2 size={18} style={{ flexShrink: 0 }} />
-                <Typography variant="caption" sx={{ fontSize: "0.825rem", color: "#34d399", lineHeight: 1.3 }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    fontSize: "0.825rem",
+                    color: "#52c41a",
+                    lineHeight: 1.3,
+                  }}
+                >
                   {successMessage}
                 </Typography>
               </Box>
@@ -242,7 +286,14 @@ export const AuthPage = () => {
                 }}
               >
                 <AlertCircle size={18} style={{ flexShrink: 0 }} />
-                <Typography variant="caption" sx={{ fontSize: "0.825rem", color: "#f87171", lineHeight: 1.3 }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    fontSize: "0.825rem",
+                    color: "#f87171",
+                    lineHeight: 1.3,
+                  }}
+                >
                   {apiError}
                 </Typography>
               </Box>
@@ -253,13 +304,27 @@ export const AuthPage = () => {
               {/* MFA STEP */}
               {isMfaRequired ? (
                 <Box sx={{ mb: 2.5 }}>
-                  <Typography variant="caption" sx={{ color: "text.secondary", mb: 0.8, display: "block", fontSize: "0.75rem" }}>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: "text.secondary",
+                      mb: 0.8,
+                      display: "block",
+                      fontSize: "0.75rem",
+                    }}
+                  >
                     Security Code
                   </Typography>
                   <Box sx={{ position: "relative" }}>
                     <KeyRound
                       size={18}
-                      style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#6b7280" }}
+                      style={{
+                        position: "absolute",
+                        left: 12,
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        color: "#6b7280",
+                      }}
                     />
                     <input
                       type="text"
@@ -286,24 +351,43 @@ export const AuthPage = () => {
                 <>
                   {/* USERNAME FIELD */}
                   <Box sx={{ mb: 2 }}>
-                    <Typography variant="caption" sx={{ color: "text.secondary", mb: 0.6, display: "block", fontSize: "0.75rem", fontWeight: 600 }}>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: "text.secondary",
+                        mb: 0.6,
+                        display: "block",
+                        fontSize: "0.75rem",
+                        fontWeight: 600,
+                      }}
+                    >
                       Username or ID
                     </Typography>
                     <Box sx={{ position: "relative" }}>
                       <User
                         size={18}
-                        style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#6b7280" }}
+                        style={{
+                          position: "absolute",
+                          left: 12,
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          color: "#6b7280",
+                        }}
                       />
                       <input
                         type="text"
-                        placeholder="admin"
+                        placeholder="username"
                         value={formData.username}
-                        onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, username: e.target.value })
+                        }
                         style={{
                           width: "100%",
                           padding: "10px 12px 10px 40px",
                           backgroundColor: "rgba(255, 255, 255, 0.03)",
-                          border: errors.username ? "1px solid #ef4444" : "1px solid rgba(255, 255, 255, 0.1)",
+                          border: errors.username
+                            ? "1px solid #ef4444"
+                            : "1px solid rgba(255, 255, 255, 0.1)",
                           borderRadius: "8px",
                           color: "#fff",
                           fontSize: "0.875rem",
@@ -312,7 +396,15 @@ export const AuthPage = () => {
                       />
                     </Box>
                     {errors.username && (
-                      <Typography variant="caption" sx={{ color: "#ef4444", fontSize: "0.72rem", mt: 0.4, display: "block" }}>
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: "#ef4444",
+                          fontSize: "0.72rem",
+                          mt: 0.4,
+                          display: "block",
+                        }}
+                      >
                         {errors.username}
                       </Typography>
                     )}
@@ -321,24 +413,43 @@ export const AuthPage = () => {
                   {/* EMAIL FIELD (REGISTER MODE) */}
                   {!isLoginMode && (
                     <Box sx={{ mb: 2 }}>
-                      <Typography variant="caption" sx={{ color: "text.secondary", mb: 0.6, display: "block", fontSize: "0.75rem", fontWeight: 600 }}>
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: "text.secondary",
+                          mb: 0.6,
+                          display: "block",
+                          fontSize: "0.75rem",
+                          fontWeight: 600,
+                        }}
+                      >
                         Corporate Email
                       </Typography>
                       <Box sx={{ position: "relative" }}>
                         <Mail
                           size={18}
-                          style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#6b7280" }}
+                          style={{
+                            position: "absolute",
+                            left: 12,
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                            color: "#6b7280",
+                          }}
                         />
                         <input
                           type="email"
                           placeholder="user@organization.com"
                           value={formData.email}
-                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                          onChange={(e) =>
+                            setFormData({ ...formData, email: e.target.value })
+                          }
                           style={{
                             width: "100%",
                             padding: "10px 12px 10px 40px",
                             backgroundColor: "rgba(255, 255, 255, 0.03)",
-                            border: errors.email ? "1px solid #ef4444" : "1px solid rgba(255, 255, 255, 0.1)",
+                            border: errors.email
+                              ? "1px solid #ef4444"
+                              : "1px solid rgba(255, 255, 255, 0.1)",
                             borderRadius: "8px",
                             color: "#fff",
                             fontSize: "0.875rem",
@@ -347,7 +458,15 @@ export const AuthPage = () => {
                         />
                       </Box>
                       {errors.email && (
-                        <Typography variant="caption" sx={{ color: "#ef4444", fontSize: "0.72rem", mt: 0.4, display: "block" }}>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: "#ef4444",
+                            fontSize: "0.72rem",
+                            mt: 0.4,
+                            display: "block",
+                          }}
+                        >
                           {errors.email}
                         </Typography>
                       )}
@@ -356,24 +475,43 @@ export const AuthPage = () => {
 
                   {/* PASSWORD FIELD */}
                   <Box sx={{ mb: 1.5 }}>
-                    <Typography variant="caption" sx={{ color: "text.secondary", mb: 0.6, display: "block", fontSize: "0.75rem", fontWeight: 600 }}>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: "text.secondary",
+                        mb: 0.6,
+                        display: "block",
+                        fontSize: "0.75rem",
+                        fontWeight: 600,
+                      }}
+                    >
                       Password
                     </Typography>
                     <Box sx={{ position: "relative" }}>
                       <Lock
                         size={18}
-                        style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#6b7280" }}
+                        style={{
+                          position: "absolute",
+                          left: 12,
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          color: "#6b7280",
+                        }}
                       />
                       <input
                         type={showPassword ? "text" : "password"}
                         placeholder="••••••••"
                         value={formData.password}
-                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, password: e.target.value })
+                        }
                         style={{
                           width: "100%",
                           padding: "10px 40px 10px 40px",
                           backgroundColor: "rgba(255, 255, 255, 0.03)",
-                          border: errors.password ? "1px solid #ef4444" : "1px solid rgba(255, 255, 255, 0.1)",
+                          border: errors.password
+                            ? "1px solid #ef4444"
+                            : "1px solid rgba(255, 255, 255, 0.1)",
                           borderRadius: "8px",
                           color: "#fff",
                           fontSize: "0.875rem",
@@ -394,11 +532,23 @@ export const AuthPage = () => {
                           "&:hover": { color: "#fff" },
                         }}
                       >
-                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        {showPassword ? (
+                          <EyeOff size={18} />
+                        ) : (
+                          <Eye size={18} />
+                        )}
                       </Box>
                     </Box>
                     {errors.password && (
-                      <Typography variant="caption" sx={{ color: "#ef4444", fontSize: "0.72rem", mt: 0.4, display: "block" }}>
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: "#ef4444",
+                          fontSize: "0.72rem",
+                          mt: 0.4,
+                          display: "block",
+                        }}
+                      >
                         {errors.password}
                       </Typography>
                     )}
@@ -406,7 +556,14 @@ export const AuthPage = () => {
 
                   {/* PERSISTENCE & FORGOT PASSWORD */}
                   {isLoginMode && (
-                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2.5 }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        mb: 2.5,
+                      }}
+                    >
                       <FormControlLabel
                         control={
                           <Checkbox
@@ -420,9 +577,15 @@ export const AuthPage = () => {
                             }}
                           />
                         }
-                        label={<Typography variant="caption" sx={{ color: "#9ca3af", fontSize: "0.75rem" }}>Remember me</Typography>}
+                        label={
+                          <Typography
+                            variant="caption"
+                            sx={{ color: "#9ca3af", fontSize: "0.75rem" }}
+                          >
+                            Remember me
+                          </Typography>
+                        }
                       />
-                      
                     </Box>
                   )}
                 </>
@@ -455,7 +618,13 @@ export const AuthPage = () => {
                   <CircularProgress size={20} sx={{ color: "#000" }} />
                 ) : (
                   <>
-                    <span>{isMfaRequired ? "Verify Code" : isLoginMode ? "Sign In to Console" : "Create Account"}</span>
+                    <span>
+                      {isMfaRequired
+                        ? "Verify Code"
+                        : isLoginMode
+                          ? "Sign In to Console"
+                          : "Create Account"}
+                    </span>
                     <ArrowRight size={16} />
                   </>
                 )}
@@ -472,7 +641,9 @@ export const AuthPage = () => {
                 color: "#9ca3af",
               }}
             >
-              {isLoginMode ? "Don't have an enterprise account? " : "Already registered? "}
+              {isLoginMode
+                ? "Don't have an enterprise account? "
+                : "Already registered? "}
               <span
                 onClick={() => {
                   setIsLoginMode(!isLoginMode);

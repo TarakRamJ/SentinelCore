@@ -115,7 +115,7 @@ export const Sidebar = ({ isOpen = true, onToggle }) => {
             <Search size={15} color="#8B93A3" style={{ position: 'absolute', left: '12px', pointerEvents: 'none' }} />
             <input 
               type="text"
-              placeholder="Search pages..."
+              placeholder="Search"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{
